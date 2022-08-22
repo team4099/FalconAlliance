@@ -17,7 +17,7 @@ __all__ = ["ApiClient"]
 
 
 class ApiClient:
-    """Base class that contains all requests for the TBA API wrapper."""
+    """Base class that contains all requests to the TBA API."""
 
     def __init__(self, api_key: str = None):
         if api_key is None:
