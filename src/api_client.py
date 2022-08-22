@@ -24,7 +24,7 @@ class ApiClient:
             try:
                 api_key = os.environ["TBA_API_KEY"]
             except KeyError:  # pragma: no cover
-                # In case TBA_API_KEY isn't an environment variable
+                # If TBA_API_KEY isn't an environment variable
                 api_key = os.environ["API_KEY"]
 
         self._headers = {"X-TBA-Auth-Key": api_key}
