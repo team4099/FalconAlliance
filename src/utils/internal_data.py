@@ -1,7 +1,7 @@
 import asyncio
 import typing
 
-import aiohttp
+from aiohttp_client_cache import CacheBackend, CachedSession
 
 from .exceptions import TBAError
 
@@ -39,4 +39,5 @@ class InternalData:
     async def set_session(cls) -> None:
         """Initializes a `aiohttp.ClientSession` instance to send GET/POST requests out of."""
         if cls.session is None:
-            cls.session = aiohttp.ClientSession()
+            cache = CacheBackend(cache_control=True)
+            cls.session = CachedSession(cache=cache)
