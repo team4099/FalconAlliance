@@ -8,14 +8,14 @@ In the folder you want to clone the repository in, run `git clone https://github
 **FalconAlliance** uses poetry to manage dependencies. Below are the steps to get all dependencies set up.
 1. Run `python -m pip install -U poetry` in your terminal to install poetry.
 2. Run `poetry install` to install all dependencies that FalconAlliance uses.
-  - If you get an error regarding the dependencies not matching any versions, run `poetry update` instead.
-4. Run `pre-commit install` to install the pre-commit hooks used for formatting your code and ensuring it complies to PEP8.
+    - If you get an error regarding the dependencies not matching any versions, run `poetry update` instead.
+3. Run `pre-commit install` to install the pre-commit hooks used for formatting your code and ensuring it complies to PEP8.
 
 
 ## Commiting Your Code
 When commiting your code, you should see pre-commit hooks such as `flake8`, `black` and more. It should look something like this: ![image](https://user-images.githubusercontent.com/82843611/185821954-402ba66a-3573-44a5-a85c-483ff618de0d.png)
 <br>
-If no pre-commit hooks run, run `pre-commit install` then commit your changes. 
+If no pre-commit hooks run, run `pre-commit install` then commit your changes.
 ### Pre-Commit Hooks Failing
 If `flake8` fails, it will inform you about the lines of code that don't follow PEP8, and you should fix them accordingly.
 If any pre-commit hook other than `flake8` fails simply commit again as they have formatted your code to follow PEP8 (Python's style guide).
@@ -28,11 +28,11 @@ Remember to follow this when following your code.
 def function_name(parameter: parameter_type) -> return_type:
   """
   Explanation of what this function does.
-  
+
   Parameters:
   	parameter:
     	Explanation of what parameter is
-  
+
   Returns:
   	Explanation of what this function returns
   """
