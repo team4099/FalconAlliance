@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "falcon-alliance"
+version = "0.0.a0"
+description = "A Pythonic library that attains FRC-related information from sources like The Blue Alliance and more."
+authors = ["The Falcons - Team 4099 <contact@team4099.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aiohttp = "~=3.7.4"
+pytest = "~=7.1.2"
+python-dotenv = "~=0.19"
+
+
+[tool.poetry.dev-dependencies]
+black = "~22.6.0"
+flake8 = "~=3.8"
+flake8-annotations = "~=2.3"
+flake8-bugbear = "~=20.1"
+flake8-docstrings = "~=1.5"
+flake8-string-format = "~=0.3"
+flake8-tidy-imports = "~=4.1"
+flake8-todo = "~=0.7"
+flake8-isort = "~=4.0"
+pep8-naming = "~=0.11"
+pre-commit = "~=2.1"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 6
+order_by_type = false
+case_sensitive = true
+combine_as_imports = true
+line_length = 120
+atomic = true
