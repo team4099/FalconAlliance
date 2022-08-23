@@ -137,7 +137,40 @@ class District(BaseSchema):
 
 
 class Event(BaseSchema):
-    """Class representing an event containing methods to get specific event information."""
+    """Class representing an event containing methods to get specific event information
+
+    Attributes:
+        key (str): TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.
+        name (str, optional): Official name of event on record either provided by FIRST or organizers of offseason event.
+        event_code (str): Event short code, as provided by FIRST.
+        event_type (int, optional): Event Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/event_type.py#L2
+        district (District, optional): The district the event occurred in.
+        city (str, optional): City, town, village, etc. the event is located in.
+        state_prov (str, optional): State or Province the event is located in.
+        country (str, optional): Country the event is located in.
+        start_date (datetime.datetime, optional): Event start date in yyyy-mm-dd format.
+        end_date (datetime.datetime, optional): Event end date in yyyy-mm-dd format.
+        year (int): Year the event data is for.
+        short_name (str, optional): Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be None.
+        event_type_string (str): Event Type, eg Regional, District, or Offseason.
+        week (int, optional): Week of the event relative to the first official season event, zero-indexed. Only valid for Regionals, Districts, and District Championships. Equal to None otherwise. (Eg. A season with a week 0 'preseason' event does not count, and week 1 events will show 0 here. Seasons with a week 0.5 regional event will show week 0 for those event(s) and week 1 for week 1 events and so on.)
+        address (str, optional): Address of the event's venue, if available.
+        postal_code (str, optional): Postal code from the event address.
+        gmaps_place_id (str, optional): Google Maps Place ID for the event address.
+        gmaps_url (str, optional): Link to address location on Google Maps.
+        lat (float, optional): Latitude for the event address.
+        lng (float, optional): Longitude for the event address.
+        location_name (str, optional): Name of the location at the address for the event, eg. Blue Alliance High School.
+        timezone (str, optional): Timezone name.
+        website (str, optional): The event's website, if any.
+        first_event_id (str, optional): The FIRST internal Event ID, used to link to the event on the FRC webpage.
+        first_event_code (str, optional): Public facing event code used by FIRST (on frc-events.firstinspires.org, for example)
+        webcasts (list, optional): A list of all webcasts recording the event.
+        division_keys (list, optional): A list of event keys for the divisions of the event.
+        parent_event_key (str, optional): The TBA Event key that represents the event's parent. Used to link back to the event from a division event. It is also the inverse relation of divison_keys.
+        playoff_type (int, optional): Playoff Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/playoff_type.py#L4, or None.
+        playoff_type_string (str, optional): String representation of the playoff_type, or None.
+    """  # noqa
 
     @dataclass()
     class DistrictPoints:
