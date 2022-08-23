@@ -60,29 +60,7 @@ class District(BaseSchema):
 
         super().__init__()
 
-    # Defining across multiple files/classes for autocomplete to work
-    def synchronous(coro: typing.Coroutine) -> typing.Callable:
-        """
-        Decorator that wraps an asynchronous function around a synchronous function.
-        Users can call the function synchronously although its internal behavior is asynchronous for efficiency.
-
-        Parameters:
-            coro: A coroutine that is passed into the decorator.
-
-        Returns:
-            A synchronous function with its internal behavior being asynchronous.
-        """
-
-        @functools.wraps(coro)
-        def wrapper(self, *args, **kwargs) -> typing.Any:
-            return InternalData.loop.run_until_complete(coro(self, *args, **kwargs))
-
-        wrapper.coro = coro
-
-        return wrapper
-
-    @synchronous
-    async def events(
+    def events(
         self,
         simple: bool = False,
         keys: bool = False,
@@ -90,29 +68,29 @@ class District(BaseSchema):
         """
         Retrieves a list of events in the given district.
 
-        Parameters:
-            simple:
-                A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the keys of the events in a given district should be retrieved.
+        Args:
+            simple (bool): A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the keys of the events in a given district should be retrieved.
 
         Returns:
-            A list of strings with each string representing an event's key for all the events in the given district or a list of Event objects with each object representing an event in the given district.
+            - list[str]: A list of strings with each string representing an event's key for all the events in the given district
+            - list[Event]: A list of Event objects with each object representing an event in the given district.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
 
-        response = await InternalData.get(
-            url=construct_url("district", key=self.key, endpoint="events", simple=simple, keys=keys),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url("district", key=self.key, endpoint="events", simple=simple, keys=keys),
+                headers=self._headers,
+            )
         )
         if keys:
             return response
         else:
             return [Event(**event_data) for event_data in response]
 
-    @synchronous
-    async def teams(
+    def teams(
         self,
         simple: bool = False,
         keys: bool = False,
@@ -132,25 +110,26 @@ class District(BaseSchema):
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
 
-        response = await InternalData.get(
-            url=construct_url("district", key=self.key, endpoint="teams", simple=simple, keys=keys),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url("district", key=self.key, endpoint="teams", simple=simple, keys=keys),
+                headers=self._headers,
+            )
         )
         if keys:
             return response
         else:
             return [Team(**event_data) for event_data in response]
 
-    @synchronous
-    async def rankings(self) -> typing.List[Ranking]:
+    def rankings(self) -> typing.List[Ranking]:
         """
         Retrieves a list of team district rankings for the given district.
 
         Returns:
             A list of Ranking objects with each Ranking object representing a team's district ranking for the given district.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("district", key=self.key, endpoint="rankings"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("district", key=self.key, endpoint="rankings"), headers=self._headers)
         )
         return [self.Ranking(**team_ranking_data) for team_ranking_data in response]
 
@@ -371,27 +350,6 @@ class Event(BaseSchema):
 
         super().__init__()
 
-    # Defining across multiple files/classes for autocomplete to work
-    def synchronous(coro: typing.Coroutine) -> typing.Callable:
-        """
-        Decorator that wraps an asynchronous function around a synchronous function.
-        Users can call the function synchronously although its internal behavior is asynchronous for efficiency.
-
-        Parameters:
-            coro: A coroutine that is passed into the decorator.
-
-        Returns:
-            A synchronous function with its internal behavior being asynchronous.
-        """
-
-        @functools.wraps(coro)
-        def wrapper(self, *args, **kwargs) -> typing.Any:
-            return InternalData.loop.run_until_complete(coro(self, *args, **kwargs))
-
-        wrapper.coro = coro
-
-        return wrapper
-
     def alliances(self) -> typing.List[Alliance]:
         """
         Retrieves all alliances of an event.
@@ -404,37 +362,35 @@ class Event(BaseSchema):
         )
         return [self.Alliance(**alliance_info) for alliance_info in response]
 
-    @synchronous
-    async def awards(self) -> typing.List[Award]:
+    def awards(self) -> typing.List[Award]:
         """
         Retrieves all awards distributed in an event.
 
         Returns:
             A list of Award objects representing each award distributed in an event.
         """
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="awards"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="awards"), headers=self._headers)
         )
         return [Award(**award_info) for award_info in response]
 
-    @synchronous
-    async def district_points(self) -> typing.Optional[DistrictPoints]:
+    def district_points(self) -> typing.Optional[DistrictPoints]:
         """
         Retrieves district points for teams during an event for both qualification and tiebreaker matches.
 
         Returns:
             A DistrictPoints object containing "points" and "tiebreakers" fields, with each field possessing a dictionary mapping team keys to their points or None if the event doesn't take place in a district or district points are not applicable to the event.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="district_points"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url("event", key=self.key, endpoint="district_points"), headers=self._headers
+            )
         )
-        event_district_points = response
 
-        if event_district_points:
-            return self.DistrictPoints(**event_district_points)
+        if response:
+            return self.DistrictPoints(**response)
 
-    @synchronous
-    async def insights(self) -> typing.Optional[Insights]:
+    def insights(self) -> typing.Optional[Insights]:
         """
         Retrieves insights of an event (specific data about performance and the like at the event; specific by game).
         Insights can only be retrieved for any events from 2016 and onwards.
@@ -442,16 +398,14 @@ class Event(BaseSchema):
         Returns:
             An Insight object containing qualification and playoff insights from the event. Can be None if the event hasn't occurred yet, and the fields of Insight may be None depending on how far the event has advanced.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="insights"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="insights"), headers=self._headers)
         )
-        insights = response
 
-        if insights:
-            return self.Insights(**insights)
+        if response:
+            return self.Insights(**response)
 
-    @synchronous
-    async def matches(
+    def matches(
         self, simple: bool = False, keys: bool = False, timeseries: bool = False
     ) -> typing.List[typing.Union[str, Match]]:
         """
@@ -476,19 +430,20 @@ class Event(BaseSchema):
                 " can be True. You can't mix and match parameters."
             )
 
-        response = await InternalData.get(
-            url=construct_url(
-                "event", key=self.key, endpoint="matches", simple=simple, keys=keys, timeseries=timeseries
-            ),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url(
+                    "event", key=self.key, endpoint="matches", simple=simple, keys=keys, timeseries=timeseries
+                ),
+                headers=self._headers,
+            )
         )
         if keys or timeseries:
             return response
         else:
             return [Match(**match_data) for match_data in response]
 
-    @synchronous
-    async def oprs(self) -> OPRs:
+    def oprs(self) -> OPRs:
         """
         Retrieves different metrics for all teams during an event.
         To see an explanation on OPR and other metrics retrieved from an event, see https://www.thebluealliance.com/opr.
@@ -496,53 +451,48 @@ class Event(BaseSchema):
         Returns:
             An OPRs object containing a key/value pair for the OPRs, DPRs, and CCWMs of all teams at an event. The fields of `OPRs` may be empty if OPRs, DPRs, and CCWMs weren't calculated.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="oprs"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="oprs"), headers=self._headers)
         )
-        metric_data = response
 
-        if metric_data:
+        if response:
             return self.OPRs(**response)
         else:  # pragma: no cover
             return self.OPRs(oprs={}, dprs={}, ccwms={})
 
-    @synchronous
-    async def predictions(self) -> dict:
+    def predictions(self) -> dict:
         """
         Retrieves predictions for matches of an event. May not work for all events since this endpoint is in beta per TBA.
 
         Returns:
             A dictionary containing the predictions of an event from TBA (contains year-specific information). May be an empty dictionary if there are no predictions available for that event.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="predictions"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="predictions"), headers=self._headers)
         )
         return response
 
-    @synchronous
-    async def rankings(self) -> typing.Dict[str, Ranking]:
+    def rankings(self) -> typing.Dict[str, Ranking]:
         """
         Retrieves a list of team rankings for an event.
 
         Returns:
             A dictionary with team keys as the keys of the dictionary and Ranking objects for that team's information about their ranking at an event as values of the dictionary.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="rankings"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="rankings"), headers=self._headers)
         )
-        rankings_info = response
         rankings_dict = {}
 
-        for rank_info in rankings_info["rankings"]:
-            rank_info["extra_stats"] = self.ExtraStats(rank_info["extra_stats"], rankings_info["extra_stats_info"])
-            rank_info["sort_orders"] = self.SortOrders(rank_info["sort_orders"], rankings_info["sort_order_info"])
+        for rank_info in response["rankings"]:
+            rank_info["extra_stats"] = self.ExtraStats(rank_info["extra_stats"], response["extra_stats_info"])
+            rank_info["sort_orders"] = self.SortOrders(rank_info["sort_orders"], response["sort_order_info"])
 
             rankings_dict[rank_info["team_key"]] = self.Ranking(**rank_info)
 
         return rankings_dict
 
-    @synchronous
-    async def teams(
+    def teams(
         self, simple: bool = False, keys: bool = False, statuses: bool = False
     ) -> typing.Union[typing.List[typing.Union[str, "Team"]], typing.Dict[str, EventTeamStatus]]:
         """
@@ -565,9 +515,11 @@ class Event(BaseSchema):
                 " You can't mix and match parameters."
             )
 
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="teams", simple=simple, keys=keys, statuses=statuses),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url("event", key=self.key, endpoint="teams", simple=simple, keys=keys, statuses=statuses),
+                headers=self._headers,
+            )
         )
         if keys:
             return response
@@ -620,30 +572,25 @@ class Team(BaseSchema):
 
         super().__init__()
 
-    # Defining across multiple files/classes for autocomplete to work
-    def synchronous(coro: typing.Coroutine) -> typing.Callable:
-        """
-        Decorator that wraps an asynchronous function around a synchronous function.
-        Users can call the function synchronously although its internal behavior is asynchronous for efficiency.
-
-        Parameters:
-            coro: A coroutine that is passed into the decorator.
-
-        Returns:
-            A synchronous function with its internal behavior being asynchronous.
-        """
-
-        @functools.wraps(coro)
-        def wrapper(self, *args, **kwargs) -> typing.Any:
-            return InternalData.loop.run_until_complete(coro(self, *args, **kwargs))
-
-        wrapper.coro = coro
-
-        return wrapper
-
     async def _get_year_events(
         self, year: int, simple: bool, keys: bool, statuses: bool
     ) -> typing.Union[typing.List[typing.Union[str, Event]], typing.Dict[str, EventTeamStatus]]:
+        """
+        Retrieves and returns all events from a year based on the parameters given.
+
+        Parameters:
+            year:
+                An integer that specifies if only the events the team participated from that year should be retrieved.
+            simple:
+                A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
+            keys:
+                A boolean that specifies whether only the names of the events this team has participated in should be returned.
+            statuses:
+                A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
+
+        Returns:
+            A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
+        """  # noqa
         response = await InternalData.get(
             url=construct_url(
                 "team", key=self.key, endpoint="events", year=year, simple=simple, keys=keys, statuses=statuses
@@ -718,8 +665,7 @@ class Team(BaseSchema):
         response = await InternalData.get(url=url, headers=self._headers)
         return [Media(**media_data) for media_data in response]
 
-    @synchronous
-    async def awards(self, year: typing.Optional[typing.Union[range, int]] = None) -> typing.List[Award]:
+    def awards(self, year: typing.Optional[typing.Union[range, int]] = None) -> typing.List[Award]:
         """
         Retrieves all awards a team has gotten either during its career or during certain year(s).
 
@@ -730,30 +676,34 @@ class Team(BaseSchema):
         Returns:
             A list of Award objects representing each award a team has got based on the parameters; may be empty if the team has gotten no awards.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("team", key=self.key, endpoint="awards", year=year if isinstance(year, int) else False),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url(
+                    "team", key=self.key, endpoint="awards", year=year if isinstance(year, int) else False
+                ),
+                headers=self._headers,
+            )
         )
         if isinstance(year, range):
             return [Award(**award_data) for award_data in response if award_data["year"] in year]
         else:
             return [Award(**award_data) for award_data in response]
 
-    @synchronous
-    async def years_participated(self) -> typing.List[int]:
+    def years_participated(self) -> typing.List[int]:
         """
         Returns all the years this team has participated in.
 
         Returns:
             A list of integers representing every year this team has participated in.
         """
-        response = await InternalData.get(
-            url=construct_url("team", key=self.key, endpoint="years_participated"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url("team", key=self.key, endpoint="years_participated"), headers=self._headers
+            )
         )
         return response
 
-    @synchronous
-    async def districts(self) -> typing.List[District]:
+    def districts(self) -> typing.List[District]:
         """
         Retrieves a list of districts representing each year this team was in said district.
 
@@ -762,13 +712,12 @@ class Team(BaseSchema):
         Returns:
             A list of districts representing each year this team was in said district if a team has participated in a district, otherwise returns an empty list.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("team", key=self.key, endpoint="districts"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("team", key=self.key, endpoint="districts"), headers=self._headers)
         )
         return [District(**district_data) for district_data in response]
 
-    @synchronous
-    async def matches(
+    def matches(
         self,
         year: typing.Union[range, int],
         event_code: typing.Optional[str] = None,
@@ -797,16 +746,15 @@ class Team(BaseSchema):
         if isinstance(year, range):
             return list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(
-                        *[self.matches.coro(self, spec_year, event_code, simple, keys) for spec_year in year]
+                    InternalData.loop.run_until_complete(
+                        asyncio.gather(*[self.matches(spec_year, event_code, simple, keys) for spec_year in year])
                     )
                 )
             )
         else:
-            return await self._get_year_matches(year, event_code, simple, keys)
+            return InternalData.loop.run_until_complete(self._get_year_matches(year, event_code, simple, keys))
 
-    @synchronous
-    async def media(self, year: typing.Union[range, int], media_tag: typing.Optional[str] = None) -> typing.List[Media]:
+    def media(self, year: typing.Union[range, int], media_tag: typing.Optional[str] = None) -> typing.List[Media]:
         """
         Retrieves all the media of a certain team based off the parameters.
 
@@ -822,14 +770,15 @@ class Team(BaseSchema):
         if isinstance(year, range):
             return list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(*[self.media.coro(self, spec_year, media_tag) for spec_year in year])
+                    InternalData.loop.run_until_complete(
+                        asyncio.gather(*[self.media(spec_year, media_tag) for spec_year in year])
+                    )
                 )
             )
         else:
-            return await self._get_year_media(year, media_tag)
+            return InternalData.loop.run_until_complete(self._get_year_media(year, media_tag))
 
-    @synchronous
-    async def robots(self) -> typing.List[Robot]:
+    def robots(self) -> typing.List[Robot]:
         """
         Retrieves a list of robots representing each robot for every year the team has played if they named the robot.
 
@@ -838,13 +787,12 @@ class Team(BaseSchema):
         Returns:
             A list of districts representing each year this team was in said district if a team has named a robot, otherwise returns an empty list.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("team", key=self.key, endpoint="robots"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("team", key=self.key, endpoint="robots"), headers=self._headers)
         )
         return [Robot(**robot_data) for robot_data in response]
 
-    @synchronous
-    async def events(
+    def events(
         self,
         year: typing.Union[range, int] = None,
         simple: bool = False,
@@ -852,7 +800,7 @@ class Team(BaseSchema):
         statuses: bool = False,
     ) -> typing.Union[typing.List[typing.Union[Event, str]], typing.Dict[str, EventTeamStatus]]:
         """
-        Retrieves and returns a record of teams based on the parameters given.
+        Retrieves and returns a record of events based on the parameters given.
 
         Parameters:
             year:
@@ -884,16 +832,15 @@ class Team(BaseSchema):
         if isinstance(year, range):
             return list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(
-                        *[self.events.coro(self, spec_year, simple, keys, statuses) for spec_year in year]
+                    InternalData.loop.run_until_complete(
+                        asyncio.gather(*[self.events(spec_year, simple, keys, statuses) for spec_year in year])
                     )
                 )
             )
         else:
-            return await self._get_year_events(year, simple, keys, statuses)
+            return InternalData.loop.run_until_complete(self._get_year_events(year, simple, keys, statuses))
 
-    @synchronous
-    async def event(
+    def event(
         self,
         event_key: str,
         *,
@@ -938,19 +885,21 @@ class Team(BaseSchema):
                 "if statuses is True then simple, keys, and matches must be False."
             )
 
-        response = await InternalData.get(
-            url=construct_url(
-                "team",
-                key=self.key,
-                endpoint="event",
-                event_key=event_key,
-                awards=awards,
-                matches=matches,
-                status=status,
-                simple=simple,
-                keys=keys,
-            ),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url(
+                    "team",
+                    key=self.key,
+                    endpoint="event",
+                    event_key=event_key,
+                    awards=awards,
+                    matches=matches,
+                    status=status,
+                    simple=simple,
+                    keys=keys,
+                ),
+                headers=self._headers,
+            )
         )
         if matches and keys:
             return response
@@ -961,16 +910,15 @@ class Team(BaseSchema):
         else:
             return EventTeamStatus(event_key, response)
 
-    @synchronous
-    async def social_media(self) -> typing.List[Media]:
+    def social_media(self) -> typing.List[Media]:
         """
         Retrieves all social media accounts of a team registered on TBA.
 
         Returns:
             A list of Media objects representing each social media account of a team. May be empty if a team has no social media accounts.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("team", key=self.key, endpoint="social_media"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("team", key=self.key, endpoint="social_media"), headers=self._headers)
         )
         return [Media(**social_media_info) for social_media_info in response]
 
