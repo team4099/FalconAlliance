@@ -1,3 +1,4 @@
 API Reference
 =============
-.. autofunction::falcon_alliance.District.events
+.. autoclass:: falcon_alliance.District
+   :members:
