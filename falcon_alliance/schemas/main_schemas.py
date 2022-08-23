@@ -747,7 +747,9 @@ class Team(BaseSchema):
             return list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self.matches(spec_year, event_code, simple, keys) for spec_year in year])
+                        asyncio.gather(
+                            *[self._get_year_matches(spec_year, event_code, simple, keys) for spec_year in year]
+                        )
                     )
                 )
             )
@@ -771,7 +773,7 @@ class Team(BaseSchema):
             return list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self.media(spec_year, media_tag) for spec_year in year])
+                        asyncio.gather(*[self._get_year_media(spec_year, media_tag) for spec_year in year])
                     )
                 )
             )
@@ -833,7 +835,9 @@ class Team(BaseSchema):
             return list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self.events(spec_year, simple, keys, statuses) for spec_year in year])
+                        asyncio.gather(
+                            *[self._get_year_events(spec_year, simple, keys, statuses) for spec_year in year]
+                        )
                     )
                 )
             )
