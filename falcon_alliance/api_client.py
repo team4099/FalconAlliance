@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 from .schemas import *
 from .utils import *
 
-load_dotenv()
-
 __all__ = ["ApiClient"]
 
 
@@ -20,6 +18,8 @@ class ApiClient:
     """Base class that contains all requests to the TBA API."""
 
     def __init__(self, api_key: str = None):
+        load_dotenv()
+
         if api_key is None:
             try:
                 api_key = os.environ["TBA_API_KEY"]
