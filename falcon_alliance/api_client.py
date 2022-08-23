@@ -98,7 +98,7 @@ class ApiClient:
         Returns:
             A list of Team objects for each team in the list.
         """  # noqa
-        if page_num:
+        if page_num is not None:
             response = await InternalData.get(
                 url=construct_url("teams", year=year, page_num=page_num, simple=simple, keys=keys),
                 headers=self._headers,
