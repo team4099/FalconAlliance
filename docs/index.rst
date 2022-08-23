@@ -15,4 +15,4 @@ Contents
 .. toctree::
 
     Home <self>
-    reference
+    reference.rst
