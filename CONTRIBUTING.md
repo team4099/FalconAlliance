@@ -29,12 +29,11 @@ def function_name(parameter: parameter_type) -> return_type:
   """
   Explanation of what this function does.
 
-  Parameters:
-  	parameter:
-    	Explanation of what parameter is
+  Args:
+      parameter (parameter_type): Explanation of what parameter is
 
   Returns:
-  	Explanation of what this function returns
+  	return_type: Explanation of what this function returns
   """
   ```
 

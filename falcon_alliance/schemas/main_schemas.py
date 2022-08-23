@@ -73,7 +73,7 @@ class District(BaseSchema):
             keys (bool): A boolean that specifies whether only the keys of the events in a given district should be retrieved.
 
         Returns:
-            typing.List[typing.Union[str, "Event"]]: A list of strings with each string representing an event's key for all the events in the given district or a list of Event objects with each object representing an event in the given district.
+            typing.List[typing.Union[str, falcon_alliance.Event]]: A list of strings with each string representing an event's key for all the events in the given district or a list of Event objects with each object representing an event in the given district.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
@@ -97,14 +97,12 @@ class District(BaseSchema):
         """
         Retrieves a list of teams in the given district.
 
-        Parameters:
-            simple:
-                A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the keys of the teams in a given district should be retrieved.
+        Args:
+            simple (bool): A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the keys of the teams in a given district should be retrieved.
 
         Returns:
-            A list of strings with each string representing a team's key for all the teams in the given district or a list of Team objects with each object representing a team in the given district.
+            typing.List[typing.Union[str, falcon_alliance.Team]]: A list of strings with each string representing a team's key for all the teams in the given district or a list of Team objects with each object representing a team in the given district.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
@@ -125,7 +123,7 @@ class District(BaseSchema):
         Retrieves a list of team district rankings for the given district.
 
         Returns:
-            A list of Ranking objects with each Ranking object representing a team's district ranking for the given district.
+            typing.List[falcon_alliance.District.Ranking]: A list of Ranking objects with each Ranking object representing a team's district ranking for the given district.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("district", key=self.key, endpoint="rankings"), headers=self._headers)
@@ -205,12 +203,11 @@ class Event(BaseSchema):
             """
             Gets the average of all the metrics for said event; could also only get one average for a specific metric if you aren't interested in all metrics.
 
-            Parameters:
-                metric:
-                    A string representing which metric to get the average for (opr/dpr/ccwm). `metric` is optional, and if not passed in, the averages for all metrics will be retrieved.
+            Args:
+                metric (str): A string representing which metric to get the average for (opr/dpr/ccwm). `metric` is optional, and if not passed in, the averages for all metrics will be retrieved.
 
             Returns:
-                A dictionary containing the averages for all metrics or a decimal (float object) representing the average of one of the metrics if specified.
+                typing.Union[dict, float]: A dictionary containing the averages for all metrics or a decimal (float object) representing the average of one of the metrics if specified.
             """  # noqa
             metric_data_mapping = {"opr": self.oprs, "dpr": self.dprs, "ccwm": self.ccwms}
 
@@ -412,7 +409,7 @@ class Event(BaseSchema):
 
         Per TBA, the timeseries data is in development and therefore you should NOT rely on it.
 
-        Parameters:
+        Args:
             simple:
                 A boolean that specifies whether the results for each match should be 'shortened' and only contain more relevant information.
             keys:
@@ -497,7 +494,7 @@ class Event(BaseSchema):
         """
         Retrieves all teams who participated at an event.
 
-        Parameters:
+        Args:
             simple:
                 A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
             keys:
@@ -577,7 +574,7 @@ class Team(BaseSchema):
         """
         Retrieves and returns all events from a year based on the parameters given.
 
-        Parameters:
+        Args:
             year:
                 An integer that specifies if only the events the team participated from that year should be retrieved.
             simple:
@@ -613,7 +610,7 @@ class Team(BaseSchema):
         """
         Retrieves all matches a team played from a certain year.
 
-        Parameters:
+        Args:
             year:
                 An integer representing the year to retrieve a team's matches from.
             event_code:
@@ -645,7 +642,7 @@ class Team(BaseSchema):
         """
         Retrieves all the media of a certain team from a certain year and based off the media_tag if passed in.
 
-        Parameters:
+        Args:
             year:
                 An integer representing a year to retrieve a team's media from.
             media_tag:
@@ -668,7 +665,7 @@ class Team(BaseSchema):
         """
         Retrieves all awards a team has gotten either during its career or during certain year(s).
 
-        Parameters:
+        Args:
             year:
                 An integer representing a year that the awards should be returned for or a range object representing the years that awards should be returned from. Can be None if no year is passed in as it is an optional parameter.
 
@@ -726,7 +723,7 @@ class Team(BaseSchema):
         """
         Retrieves all matches a team played from certain year(s).
 
-        Parameters:
+        Args:
             year:
                 An integer representing the year to retrieve a team's matches from or a range object representing all the years matches a team played should be retrieved from.
             event_code
@@ -759,7 +756,7 @@ class Team(BaseSchema):
         """
         Retrieves all the media of a certain team based off the parameters.
 
-        Parameters:
+        Args:
             year:
                 An integer representing a year to retrieve a team's media from or a range object representing all the years media from a team should be retrieved from.
             media_tag:
@@ -803,7 +800,7 @@ class Team(BaseSchema):
         """
         Retrieves and returns a record of events based on the parameters given.
 
-        Parameters:
+        Args:
             year:
                 An integer that specifies if only the events the team participated from that year should be retrieved.
                 If year is a range object, it will return all events that the team participated in during that timeframe.
@@ -856,7 +853,7 @@ class Team(BaseSchema):
         """
         Retrieves and returns a record of teams based on the parameters given.
 
-        Parameters:
+        Args:
             event_key:
                 An event key (a unique key specific to one event) to retrieve data from.
             awards:
