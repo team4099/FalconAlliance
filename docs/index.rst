@@ -7,6 +7,8 @@ Welcome to Falcon Alliance's documentation!
 
    This project is under active development.
 
+.. autofunction:: falcon_alliance.District.events
+
 Contents
 --------
 
