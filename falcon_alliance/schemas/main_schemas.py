@@ -165,7 +165,7 @@ class Event(BaseSchema):
         website (str, optional): The event's website, if any.
         first_event_id (str, optional): The FIRST internal Event ID, used to link to the event on the FRC webpage.
         first_event_code (str, optional): Public facing event code used by FIRST (on frc-events.firstinspires.org, for example)
-        webcasts (list, optional): A list of all webcasts recording the event.
+        webcasts (list[falcon_alliance.Event.Webcast, optional): A list of all webcasts recording the event.
         division_keys (list, optional): A list of event keys for the divisions of the event.
         parent_event_key (str, optional): The TBA Event key that represents the event's parent. Used to link back to the event from a division event. It is also the inverse relation of divison_keys.
         playoff_type (int, optional): Playoff Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/playoff_type.py#L4, or None.
@@ -553,7 +553,29 @@ class Event(BaseSchema):
 
 
 class Team(BaseSchema):
-    """Class representing a team's metadata with methods to get team specific data."""
+    """Class representing a team's metadata with methods to get team specific data.
+
+    Attributes:
+        key (str): TBA team key with the format frcXXXX with XXXX representing the team number.
+        team_number (int): Official team number issued by FIRST.
+        nickname (str, optional): Team nickname provided by FIRST.
+        name (str): Official long name registered with FIRST.
+        school_name (str, optional): Name of team school or affilited group registered with FIRST.
+        city (str, optional): City of team derived from parsing the address registered with FIRST.
+        state_prov (str, optional): State of team derived from parsing the address registered with FIRST.
+        country (str, optional): Country of team derived from parsing the address registered with FIRST.
+        address (str, optional): Will be None, for future development.
+        postal_code (str, optional): Postal code from the team address.
+        gmaps_place_id (str, optional): Will be None, for future development.
+        gmaps_url (str, optional): Will be None, for future development.
+        lat (float, optional): Will be None, for future development.
+        lng (float, optional): Will be None, for future development.
+        location_name (str, optional): Will be None, for future development.
+        website (str, optional): Official website associated with the team.
+        rookie_year (int, optional): First year the team officially competed.
+        motto (str, optional): Team's motto as provided by FIRST. This field is deprecated and will return None - will be removed at end-of-season in 2019.
+        home_championship (dict, optional): Location of the team's home championship each year as a key-value pair. The year (as a string) is the key, and the city is the value.
+    """  # noqa
 
     def __init__(self, *args, **kwargs):
         if len(args) == 2:
