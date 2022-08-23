@@ -1,5 +1,3 @@
-.. include:: ../README.rst
-
 Welcome to Falcon Alliance's documentation!
 ===================================
 
