@@ -13,13 +13,13 @@ from .utils import *
 
 __all__ = ["ApiClient"]
 
+load_dotenv()
+
 
 class ApiClient:
     """Base class that contains all requests to the TBA API."""
 
     def __init__(self, api_key: str = None):
-        load_dotenv()
-
         if api_key is None:
             try:
                 api_key = os.environ["TBA_API_KEY"]
@@ -41,27 +41,6 @@ class ApiClient:
         exc_tb: typing.Optional[TracebackType],
     ) -> None:
         InternalData.loop.run_until_complete(self.close())
-
-    # Defining across multiple files for autocomplete to work
-    def synchronous(coro: typing.Coroutine) -> typing.Callable:
-        """
-        Decorator that wraps an asynchronous function around a synchronous function.
-        Users can call the function synchronously although its internal behavior is asynchronous for efficiency.
-
-        Parameters:
-            coro: A coroutine that is passed into the decorator.
-
-        Returns:
-            A synchronous function with its internal behavior being asynchronous.
-        """
-
-        @functools.wraps(coro)
-        def wrapper(self, *args, **kwargs) -> typing.Any:
-            return InternalData.loop.run_until_complete(coro(self, *args, **kwargs))
-
-        wrapper.coro = coro
-
-        return wrapper
 
     async def close(self) -> None:
         """Closes the ongoing session (`aiohttp.ClientSession`)."""
@@ -94,7 +73,11 @@ class ApiClient:
             return [Event(**event_data) for event_data in response]
 
     async def _get_team_page(
-        self, page_num: int = None, year: typing.Union[range, int] = None, simple: bool = False, keys: bool = False
+        self,
+        page_num: typing.Optional[int] = None,
+        year: typing.Union[range, int] = None,
+        simple: bool = False,
+        keys: bool = False,
     ) -> typing.List[typing.Union[Team, str]]:
         """
         Returns a page of teams (a list of 500 teams or less)
@@ -115,13 +98,20 @@ class ApiClient:
         Returns:
             A list of Team objects for each team in the list.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("teams", year=year, page_num=page_num, simple=simple, keys=keys), headers=self._headers
-        )
-        return [Team(**team_data) if not isinstance(team_data, str) else team_data for team_data in response]
+        if page_num:
+            response = await InternalData.get(
+                url=construct_url("teams", year=year, page_num=page_num, simple=simple, keys=keys),
+                headers=self._headers,
+            )
+            return [Team(**team_data) if not isinstance(team_data, str) else team_data for team_data in response]
+        else:
+            return list(
+                itertools.chain.from_iterable(
+                    await asyncio.gather(*[self._get_team_page(spec_num, year, simple, keys) for spec_num in range(20)])
+                )
+            )
 
-    @synchronous
-    async def districts(self, year: int) -> typing.List[District]:
+    def districts(self, year: int) -> typing.List[District]:
         """
         Retrieves all FRC districts during a year.
 
@@ -132,11 +122,12 @@ class ApiClient:
         Returns:
             A list of District objects with each object representing an active district of that year.
         """
-        response = await InternalData.get(url=construct_url("districts", year=year), headers=self._headers)
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("districts", year=year), headers=self._headers)
+        )
         return [District(**district_data) for district_data in response]
 
-    @synchronous
-    async def event(self, event_key: str, simple: typing.Optional[bool] = False) -> Event:
+    def event(self, event_key: str, simple: typing.Optional[bool] = False) -> Event:
         """
         Retrieves and returns a record of teams based on the parameters given.
 
@@ -149,13 +140,12 @@ class ApiClient:
         Returns:
             A Team object representing the data given.
         """  # noqa
-        response = await InternalData.get(
-            url=construct_url("event", key=event_key, simple=simple), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=event_key, simple=simple), headers=self._headers)
         )
         return Event(**response)
 
-    @synchronous
-    async def events(
+    def events(
         self, year: typing.Union[range, int], simple: typing.Optional[bool] = False, keys: typing.Optional[bool] = False
     ) -> typing.List[typing.Union[Event, str]]:
         """
@@ -178,14 +168,15 @@ class ApiClient:
         if isinstance(year, range):
             return list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(*[self.events.coro(self, spec_year, simple, keys) for spec_year in year])
+                    InternalData.loop.run_until_complete(
+                        asyncio.gather(*[self._get_year_events(spec_year, simple, keys) for spec_year in year])
+                    )
                 )
             )
         else:
-            return await self._get_year_events(year, simple, keys)
+            return InternalData.loop.run_until_complete(self._get_year_events(year, simple, keys))
 
-    @synchronous
-    async def match(
+    def match(
         self, match_key: str, simple: bool = False, timeseries: bool = False, zebra_motionworks: bool = False
     ) -> typing.Optional[typing.Union[typing.List[dict], Match, Match.ZebraMotionworks]]:
         """
@@ -212,11 +203,13 @@ class ApiClient:
                 "You can't mix and match parameters."
             )
 
-        response = await InternalData.get(
-            url=construct_url(
-                "match", key=match_key, simple=simple, timeseries=timeseries, zebra_motionworks=zebra_motionworks
-            ),
-            headers=self._headers,
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(
+                url=construct_url(
+                    "match", key=match_key, simple=simple, timeseries=timeseries, zebra_motionworks=zebra_motionworks
+                ),
+                headers=self._headers,
+            )
         )
         if timeseries:  # pragma: no cover
             return response
@@ -228,19 +221,19 @@ class ApiClient:
         else:
             return Match(**response)
 
-    @synchronous
-    async def status(self) -> APIStatus:
+    def status(self) -> APIStatus:
         """
         Retrieves information about TBA's API status.
 
         Returns:
             An APIStatus object containing information about TBA's API status.
         """
-        response = await InternalData.get(url=construct_url("status").rstrip("/"), headers=self._headers)
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("status").rstrip("/"), headers=self._headers)
+        )
         return APIStatus(**response)
 
-    @synchronous
-    async def team(self, team_key: str, simple: bool = False) -> Team:
+    def team(self, team_key: str, simple: bool = False) -> Team:
         """
         Retrieves and returns a record of teams based on the parameters given.
 
@@ -253,11 +246,12 @@ class ApiClient:
         Returns:
             A Team object representing the data given.
         """  # noqa
-        response = await InternalData.get(url=construct_url("team", key=team_key, simple=simple), headers=self._headers)
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("team", key=team_key, simple=simple), headers=self._headers)
+        )
         return Team(**response)
 
-    @synchronous
-    async def teams(
+    def teams(
         self, page_num: int = None, year: typing.Union[range, int] = None, simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Team, str]]:
         """
@@ -285,8 +279,8 @@ class ApiClient:
         if isinstance(year, range):
             all_responses = list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(
-                        *[self.teams.coro(self, page_num, spec_year, simple, keys) for spec_year in year]
+                    InternalData.loop.run_until_complete(
+                        asyncio.gather(*[self._get_team_page(page_num, spec_year, simple, keys) for spec_year in year])
                     )
                 )
             )
@@ -294,12 +288,4 @@ class ApiClient:
             return sorted(list(set(all_responses)))
 
         else:
-            if page_num:
-                return await self._get_team_page(page_num, year, simple, keys)
-            else:
-                all_teams = itertools.chain.from_iterable(
-                    await asyncio.gather(
-                        *[self._get_team_page(page_number, year, simple, keys) for page_number in range(0, 20)]
-                    )
-                )
-                return list(all_teams)
+            return InternalData.loop.run_until_complete(self._get_team_page(page_num, year, simple, keys))
