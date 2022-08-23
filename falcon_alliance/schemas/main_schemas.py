@@ -307,13 +307,20 @@ class Event(BaseSchema):
                 self.date: datetime.datetime = datetime.datetime.strptime(self.date, PARSING_FORMAT)
 
     def __init__(self, *args, **kwargs):
-        if len(args) == 1:
+        if len(args) == 2:
+            self.year = int(args[0])
+            self.event_code = args[1]
+            self.key = f"{args[0]}{args[1]}"
+        elif len(args) == 1:
             (self.key,) = args
+            self.year: int = kwargs.get("year") or int(match(r"\d+", self.key)[0])
+            self.event_code: str = kwargs.get("event_code") or self.key.replace(str(self.year), "")
         else:
             self.key: str = kwargs["key"]
+            self.year: int = kwargs.get("year") or int(match(r"\d+", self.key)[0])
+            self.event_code: str = kwargs.get("event_code") or self.key.replace(str(self.year), "")
 
         self.name: typing.Optional[str] = kwargs.get("name")
-        self.event_code: typing.Optional[str] = kwargs.get("event_code")
         self.event_type: typing.Optional[int] = kwargs.get("event_type")
 
         district_data = kwargs.get("district")
@@ -333,8 +340,6 @@ class Event(BaseSchema):
         except KeyError:
             self.start_date = None
             self.end_date = None
-
-        self.year: typing.Optional[int] = kwargs.get("year")
 
         self.short_name: typing.Optional[str] = kwargs.get("short_name")
         self.event_type_string: typing.Optional[str] = kwargs.get("event_type_string")
@@ -387,16 +392,15 @@ class Event(BaseSchema):
 
         return wrapper
 
-    @synchronous
-    async def alliances(self) -> typing.List[Alliance]:
+    def alliances(self) -> typing.List[Alliance]:
         """
         Retrieves all alliances of an event.
 
         Returns:
             A list of Alliance objects representing each alliance in the event.
         """
-        response = await InternalData.get(
-            url=construct_url("event", key=self.key, endpoint="alliances"), headers=self._headers
+        response = InternalData.loop.run_until_complete(
+            InternalData.get(url=construct_url("event", key=self.key, endpoint="alliances"), headers=self._headers)
         )
         return [self.Alliance(**alliance_info) for alliance_info in response]
 

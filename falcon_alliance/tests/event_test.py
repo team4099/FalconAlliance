@@ -12,6 +12,13 @@ def test_event_one_argument():
         assert chs_comp.key == "2022chcmp"
 
 
+def test_event_two_arguments():
+    """Tests `Event` with ensuring that an instance is instantiated properly when the year and then the event code are passed in as positional arguments."""
+    with ApiClient():
+        chs_comp = Event(2022, "chcmp")
+        assert chs_comp.key == "2022chcmp" and chs_comp.year == 2022 and chs_comp.event_code == "chcmp"
+
+
 def test_event_kwarg():
     """Tests `Event` with ensuring that an instance is instantiated properly when the key is passed in as a keyword argument."""
     with ApiClient():
