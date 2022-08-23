@@ -12,5 +12,5 @@ Contents
 
 .. toctree::
 
-    Home <self>
-    API Reference <api>
+   Home <self>
+   API Reference <reference>
