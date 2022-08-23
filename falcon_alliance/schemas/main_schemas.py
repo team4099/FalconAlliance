@@ -73,8 +73,8 @@ class District(BaseSchema):
             keys (bool): A boolean that specifies whether only the keys of the events in a given district should be retrieved.
 
         Returns:
-            - list[str]: A list of strings with each string representing an event's key for all the events in the given district
-            - list[Event]: A list of Event objects with each object representing an event in the given district.
+            A list of strings with each string representing an event's key for all the events in the given district or a list of Event objects with each object representing an event in the given district.
+            list[str or Event]
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
