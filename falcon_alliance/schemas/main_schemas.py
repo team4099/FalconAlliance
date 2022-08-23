@@ -28,7 +28,7 @@ class District(BaseSchema):
 
     Attributes:
         key (str): 	Key for this district, e.g. 2022chs.
-        year (int): Year this district partiipcated.
+        year (int): Year this district participated.
         abbreviation (str): The short identifier for the district.
         display_name (str, optional): The long name for the district.
     """
