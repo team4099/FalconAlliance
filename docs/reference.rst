@@ -5,3 +5,4 @@ API Reference
 
    reference/district.rst
    reference/event.rst
+   reference/team.rst
