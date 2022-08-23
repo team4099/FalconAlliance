@@ -24,7 +24,14 @@ PARSING_FORMAT = "%Y-%m-%d"
 
 
 class District(BaseSchema):
-    """Class representing a district containing methods to get specific district information."""
+    """Class representing a district containing methods to get specific district information.
+
+    Attributes:
+        key (str): 	Key for this district, e.g. 2022chs.
+        year (int): Year this district partiipcated.
+        abbreviation (str): The short identifier for the district.
+        display_name (str, optional): The long name for the district.
+    """
 
     @dataclass()
     class Ranking:
