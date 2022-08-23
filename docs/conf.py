@@ -17,13 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Basic Sphinx Example Project"
-copyright = "2022, Read the Docs core team"
-author = "Read the Docs core team"
-
-
-# -- General configuration ---------------------------------------------------
-# -- General configuration
+project = "Falcon Alliance"
+copyright = "2022, Team 4099"
+author = "Team 4099 - The Falcons"
 
 extensions = [
     "sphinx.ext.duration",
