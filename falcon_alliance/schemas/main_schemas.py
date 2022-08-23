@@ -65,8 +65,7 @@ class District(BaseSchema):
         simple: bool = False,
         keys: bool = False,
     ) -> typing.List[typing.Union[str, "Event"]]:
-        """
-        Retrieves a list of events in the given district.
+        """Retrieves a list of events in the given district.
 
         Args:
             simple (bool): A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
@@ -94,8 +93,7 @@ class District(BaseSchema):
         simple: bool = False,
         keys: bool = False,
     ) -> typing.List[typing.Union[str, "Team"]]:
-        """
-        Retrieves a list of teams in the given district.
+        """Retrieves a list of teams in the given district.
 
         Args:
             simple (bool): A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
@@ -200,8 +198,7 @@ class Event(BaseSchema):
         ccwms: dict
 
         def average(self, metric: typing.Optional[str] = None) -> typing.Union[dict, float]:
-            """
-            Gets the average of all the metrics for said event; could also only get one average for a specific metric if you aren't interested in all metrics.
+            """Gets the average of all the metrics for said event; could also only get one average for a specific metric if you aren't interested in all metrics.
 
             Args:
                 metric (str): A string representing which metric to get the average for (opr/dpr/ccwm). `metric` is optional, and if not passed in, the averages for all metrics will be retrieved.
@@ -347,23 +344,21 @@ class Event(BaseSchema):
         super().__init__()
 
     def alliances(self) -> typing.List[Alliance]:
-        """
-        Retrieves all alliances of an event.
+        """Retrieves all alliances of an event.
 
         Returns:
-            A list of Alliance objects representing each alliance in the event.
-        """
+            typing.List[falcon_alliance.Event.Alliance]: A list of Alliance objects representing each alliance in the event.
+        """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="alliances"), headers=self._headers)
         )
         return [self.Alliance(**alliance_info) for alliance_info in response]
 
     def awards(self) -> typing.List[Award]:
-        """
-        Retrieves all awards distributed in an event.
+        """Retrieves all awards distributed in an event.
 
         Returns:
-            A list of Award objects representing each award distributed in an event.
+            typing.List[falcon_alliance.Award]: A list of Award objects representing each award distributed in an event.
         """
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="awards"), headers=self._headers)
@@ -371,11 +366,10 @@ class Event(BaseSchema):
         return [Award(**award_info) for award_info in response]
 
     def district_points(self) -> typing.Optional[DistrictPoints]:
-        """
-        Retrieves district points for teams during an event for both qualification and tiebreaker matches.
+        """Retrieves district points for teams during an event for both qualification and tiebreaker matches.
 
         Returns:
-            A DistrictPoints object containing "points" and "tiebreakers" fields, with each field possessing a dictionary mapping team keys to their points or None if the event doesn't take place in a district or district points are not applicable to the event.
+            typing.Optional[typing.Event.DistrictPoints]: A DistrictPoints object containing "points" and "tiebreakers" fields, with each field possessing a dictionary mapping team keys to their points or None if the event doesn't take place in a district or district points are not applicable to the event.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(
@@ -387,12 +381,11 @@ class Event(BaseSchema):
             return self.DistrictPoints(**response)
 
     def insights(self) -> typing.Optional[Insights]:
-        """
-        Retrieves insights of an event (specific data about performance and the like at the event; specific by game).
+        """Retrieves insights of an event (specific data about performance and the like at the event; specific by game).
         Insights can only be retrieved for any events from 2016 and onwards.
 
         Returns:
-            An Insight object containing qualification and playoff insights from the event. Can be None if the event hasn't occurred yet, and the fields of Insight may be None depending on how far the event has advanced.
+            typing.Optional[falcon_alliance.Event.Insights]: An Insight object containing qualification and playoff insights from the event. Can be None if the event hasn't occurred yet, and the fields of Insight may be None depending on how far the event has advanced.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="insights"), headers=self._headers)
@@ -404,21 +397,17 @@ class Event(BaseSchema):
     def matches(
         self, simple: bool = False, keys: bool = False, timeseries: bool = False
     ) -> typing.List[typing.Union[str, Match]]:
-        """
-        Retrieves all matches that occurred during an event.
+        """Retrieves all matches that occurred during an event.
 
         Per TBA, the timeseries data is in development and therefore you should NOT rely on it.
 
         Args:
-            simple:
-                A boolean that specifies whether the results for each match should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the keys of the matches should be retrieved.
-            timeseries:
-                A boolean that specifies whether only the keys of the matches that have timeseries data should be retrieved.
+            simple (bool): A boolean that specifies whether the results for each match should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the keys of the matches should be retrieved.
+            timeseries (bool): A boolean that specifies whether only the keys of the matches that have timeseries data should be retrieved.
 
         Returns:
-            A dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary or a list of strings representing the keys of the teams that participated in an event or a list of Team objects, each representing a team that participated in an event.
+            typing.List[typing.Union[str, falcon_alliance.Match]]: A dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary or a list of strings representing the keys of the teams that participated in an event or a list of Team objects, each representing a team that participated in an event.
         """  # noqa
         if (simple, keys, timeseries).count(True) > 1:
             raise ValueError(
@@ -440,12 +429,11 @@ class Event(BaseSchema):
             return [Match(**match_data) for match_data in response]
 
     def oprs(self) -> OPRs:
-        """
-        Retrieves different metrics for all teams during an event.
+        """Retrieves different metrics for all teams during an event.
         To see an explanation on OPR and other metrics retrieved from an event, see https://www.thebluealliance.com/opr.
 
         Returns:
-            An OPRs object containing a key/value pair for the OPRs, DPRs, and CCWMs of all teams at an event. The fields of `OPRs` may be empty if OPRs, DPRs, and CCWMs weren't calculated.
+            falcon_alliance.Event.OPRs: An OPRs object containing a key/value pair for the OPRs, DPRs, and CCWMs of all teams at an event. The fields of `OPRs` may be empty if OPRs, DPRs, and CCWMs weren't calculated.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="oprs"), headers=self._headers)
@@ -457,11 +445,10 @@ class Event(BaseSchema):
             return self.OPRs(oprs={}, dprs={}, ccwms={})
 
     def predictions(self) -> dict:
-        """
-        Retrieves predictions for matches of an event. May not work for all events since this endpoint is in beta per TBA.
+        """Retrieves predictions for matches of an event. May not work for all events since this endpoint is in beta per TBA.
 
         Returns:
-            A dictionary containing the predictions of an event from TBA (contains year-specific information). May be an empty dictionary if there are no predictions available for that event.
+            dict: A dictionary containing the predictions of an event from TBA (contains year-specific information). May be an empty dictionary if there are no predictions available for that event.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="predictions"), headers=self._headers)
@@ -469,11 +456,10 @@ class Event(BaseSchema):
         return response
 
     def rankings(self) -> typing.Dict[str, Ranking]:
-        """
-        Retrieves a list of team rankings for an event.
+        """Retrieves a list of team rankings for an event.
 
         Returns:
-            A dictionary with team keys as the keys of the dictionary and Ranking objects for that team's information about their ranking at an event as values of the dictionary.
+            typing.Dict[str, falcon_alliance.Event.Ranking]: A dictionary with team keys as the keys of the dictionary and Ranking objects for that team's information about their ranking at an event as values of the dictionary.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=self.key, endpoint="rankings"), headers=self._headers)
@@ -495,15 +481,12 @@ class Event(BaseSchema):
         Retrieves all teams who participated at an event.
 
         Args:
-            simple:
-                A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the names of the FRC teams should be retrieved.
-            statuses:
-                A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
+            simple (bool): A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the names of the FRC teams should be retrieved.
+            statuses (bool): A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
 
         Returns:
-            A dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary or a list of strings representing the keys of the teams that participated in an event or a list of Team objects, each representing a team that participated in an event.
+            typing.Union[typing.List[typing.Union[str, falcon_alliance.Team]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary or a list of strings representing the keys of the teams that participated in an event or a list of Team objects, each representing a team that participated in an event.
         """  # noqa
         if (simple, keys, statuses).count(True) > 1:
             raise ValueError(
