@@ -620,17 +620,13 @@ class Team(BaseSchema):
         Retrieves and returns all events from a year based on the parameters given.
 
         Args:
-            year:
-                An integer that specifies if only the events the team participated from that year should be retrieved.
-            simple:
-                A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the names of the events this team has participated in should be returned.
-            statuses:
-                A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
+            year (int): An integer that specifies if only the events the team participated from that year should be retrieved.
+            simple (bool): A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the names of the events this team has participated in should be returned.
+            statuses (bool): A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
 
         Returns:
-            A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
+            typing.Union[typing.List[typing.Union[str, falcon_alliance.Event]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
         """  # noqa
         response = await InternalData.get(
             url=construct_url(
@@ -656,17 +652,13 @@ class Team(BaseSchema):
         Retrieves all matches a team played from a certain year.
 
         Args:
-            year:
-                An integer representing the year to retrieve a team's matches from.
-            event_code:
-                A string representing the code of an event (the latter half of a key, eg 'iri' instead of '2022iri'). Used for filtering matches a team played to only those in a certain event.
-            simple:
-                A boolean representing whether each match's information should be stripped to only contain relevant information.
-            keys:
-                A boolean representing whether only the keys of the matches a team played from said year should be returned:
+            year (int): An integer representing the year to retrieve a team's matches from.
+            event_code (str): A string representing the code of an event (the latter half of a key, eg 'iri' instead of '2022iri'). Used for filtering matches a team played to only those in a certain event.
+            simple (bool): A boolean representing whether each match's information should be stripped to only contain relevant information.
+            keys (bool): A boolean representing whether only the keys of the matches a team played from said year should be returned:
 
         Returns:
-            A list of Match objects representing each match a team played based on the conditions; might be empty if team didn't play matches that year.
+            typing.List[falcon_alliance.Match]: A list of Match objects representing each match a team played based on the conditions; might be empty if team didn't play matches that year.
         """  # noqa
         response = await InternalData.get(
             url=construct_url("team", key=self.key, endpoint="matches", year=year, simple=simple, keys=keys),
@@ -688,14 +680,12 @@ class Team(BaseSchema):
         Retrieves all the media of a certain team from a certain year and based off the media_tag if passed in.
 
         Args:
-            year:
-                An integer representing a year to retrieve a team's media from.
-            media_tag:
-                A string representing the type of media to be returned. Can be None if media_tag is not passed in.
+            year (int): An integer representing a year to retrieve a team's media from.
+            media_tag (str): A string representing the type of media to be returned. Can be None if media_tag is not passed in.
 
         Returns:
-            A list of Media objects representing individual media from a team during a year.
-        """
+            typing.List[falcon_alliance.Media]: A list of Media objects representing individual media from a team during a year.
+        """  # noqa
         if media_tag:
             url = construct_url(
                 "team", key=self.key, endpoint="media", second_endpoint="tag", media_tag=media_tag, year=year
@@ -711,11 +701,10 @@ class Team(BaseSchema):
         Retrieves all awards a team has gotten either during its career or during certain year(s).
 
         Args:
-            year:
-                An integer representing a year that the awards should be returned for or a range object representing the years that awards should be returned from. Can be None if no year is passed in as it is an optional parameter.
+            year (int, range, optional): An integer representing a year that the awards should be returned for or a range object representing the years that awards should be returned from. Can be None if no year is passed in as it is an optional parameter.
 
         Returns:
-            A list of Award objects representing each award a team has got based on the parameters; may be empty if the team has gotten no awards.
+            typing.List[falcon_alliance.Award]: A list of Award objects representing each award a team has got based on the parameters; may be empty if the team has gotten no awards.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(
@@ -731,12 +720,7 @@ class Team(BaseSchema):
             return [Award(**award_data) for award_data in response]
 
     def years_participated(self) -> typing.List[int]:
-        """
-        Returns all the years this team has participated in.
-
-        Returns:
-            A list of integers representing every year this team has participated in.
-        """
+        """Returns all the years this team has participated in."""
         response = InternalData.loop.run_until_complete(
             InternalData.get(
                 url=construct_url("team", key=self.key, endpoint="years_participated"), headers=self._headers
@@ -751,7 +735,7 @@ class Team(BaseSchema):
         If a team has never been in a district, the list will be empty.
 
         Returns:
-            A list of districts representing each year this team was in said district if a team has participated in a district, otherwise returns an empty list.
+            typing.List[falcon_alliance.District]: A list of districts representing each year this team was in said district if a team has participated in a district, otherwise returns an empty list.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("team", key=self.key, endpoint="districts"), headers=self._headers)
@@ -769,17 +753,13 @@ class Team(BaseSchema):
         Retrieves all matches a team played from certain year(s).
 
         Args:
-            year:
-                An integer representing the year to retrieve a team's matches from or a range object representing all the years matches a team played should be retrieved from.
-            event_code
-                A string representing the code of an event (the latter half of a key, eg 'iri' instead of '2022iri'). Used for filtering matches a team played to only those in a certain event. Can be None if all matches a team played want to be retrieved.
-            simple:
-                A boolean representing whether each match's information should be stripped to only contain relevant information. Can be False if `simple` isn't passed in.
-            keys:
-                A boolean representing whether only the keys of the matches a team played from said year should be returned. Can be False if `keys` isn't passed in.
+            year (int, range): An integer representing the year to retrieve a team's matches from or a range object representing all the years matches a team played should be retrieved from.
+            event_code (str): A string representing the code of an event (the latter half of a key, eg 'iri' instead of '2022iri'). Used for filtering matches a team played to only those in a certain event. Can be None if all matches a team played want to be retrieved.
+            simple (bool): A boolean representing whether each match's information should be stripped to only contain relevant information. Can be False if `simple` isn't passed in.
+            keys (bool): A boolean representing whether only the keys of the matches a team played from said year should be returned. Can be False if `keys` isn't passed in.
 
         Returns:
-            A list of Match objects representing each match a team played based on the conditions; might be empty if team didn't play matches in the specified year(s).
+            typing.List[falcon_alliance.Match]: A list of Match objects representing each match a team played based on the conditions; might be empty if team didn't play matches in the specified year(s).
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
@@ -802,13 +782,11 @@ class Team(BaseSchema):
         Retrieves all the media of a certain team based off the parameters.
 
         Args:
-            year:
-                An integer representing a year to retrieve a team's media from or a range object representing all the years media from a team should be retrieved from.
-            media_tag:
-                A string representing the type of media to be returned. Can be None if media_tag is not passed in.
+            year (int, range): An integer representing a year to retrieve a team's media from or a range object representing all the years media from a team should be retrieved from.
+            media_tag (str): A string representing the type of media to be returned. Can be None if media_tag is not passed in.
 
         Returns:
-            A list of Media objects representing individual media from a team.
+            typing.List[falcon_alliance.Media]: A list of Media objects representing individual media from a team.
         """  # noqa
         if isinstance(year, range):
             return list(
@@ -828,7 +806,7 @@ class Team(BaseSchema):
         If a team has never named a robot, the list will be empty.
 
         Returns:
-            A list of districts representing each year this team was in said district if a team has named a robot, otherwise returns an empty list.
+            typing.List[falcon_alliance.Robot]: A list of robots representing each year a team has registered its robot onto TBA, if a team hasn't named a robot before it returns an empty list.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("team", key=self.key, endpoint="robots"), headers=self._headers)
@@ -846,19 +824,13 @@ class Team(BaseSchema):
         Retrieves and returns a record of events based on the parameters given.
 
         Args:
-            year:
-                An integer that specifies if only the events the team participated from that year should be retrieved.
-                If year is a range object, it will return all events that the team participated in during that timeframe.
-                If year is None, this method will return all events the team has ever participated in.
-            simple:
-                A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the names of the events this team has participated in should be returned.
-            statuses:
-                A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
+            year (int, range, optional): An integer that specifies if only the events the team participated from that year should be retrieved. If year is a range object, it will return all events that the team participated in during that timeframe. If year isn't passed in, this method will return all events the team has ever participated in.
+            simple (bool): A boolean that specifies whether the results for each event should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the names of the events this team has participated in should be returned.
+            statuses (bool): A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
 
         Returns:
-            A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
+            typing.Union[typing.List[typing.Union[falcon_allianc.Event, str]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
@@ -899,21 +871,15 @@ class Team(BaseSchema):
         Retrieves and returns a record of teams based on the parameters given.
 
         Args:
-            event_key:
-                An event key (a unique key specific to one event) to retrieve data from.
-            awards:
-                A boolean that specifies whether the awards a team got during a match should be retrieved. Cannot be True in conjunction with `matches`.
-            matches:
-                A boolean that specifies whether the matches a team played in during an event should be retrieved. Cannot be True in conjunction with `awards`.
-            simple:
-                A boolean that specifies whether the results for each event's matches should be 'shortened' and only contain more relevant information. Do note that `simple` should only be True in conjunction with `matches`.
-            keys:
-                A boolean that specifies whether only the keys of the matches the team played should be returned. Do note that `keys` should only be True in conjunction with `matches`
-            status:
-                A boolean that specifies whether a key/value pair of the status of the team during an event should be returned. `status` should only be the only boolean out of the parameters that is True when using it.
+            event_key (str): An event key (a unique key specific to one event) to retrieve data from.
+            awards (bool): A boolean that specifies whether the awards a team got during a match should be retrieved. Cannot be True in conjunction with `matches`.
+            matches (bool): A boolean that specifies whether the matches a team played in during an event should be retrieved. Cannot be True in conjunction with `awards`.
+            simple (bool): A boolean that specifies whether the results for each event's matches should be 'shortened' and only contain more relevant information. Do note that `simple` should only be True in conjunction with `matches`.
+            keys (bool): A boolean that specifies whether only the keys of the matches the team played should be returned. Do note that `keys` should only be True in conjunction with `matches`
+            status (bool): A boolean that specifies whether a key/value pair of the status of the team during an event should be returned. `status` should only be the only boolean out of the parameters that is True when using it.
 
         Returns:
-            A list of Match objects representing each match a team played or an EventTeamStatus object to represent the team's status during an event or a list of strings representing the keys of the matches the team played in or a list of Award objects to represent award(s) a team got during an event.
+            typing.Union[typing.List[falcon_alliance.Award], falcon_alliance.EventTeamStatus, typing.List[typing.Union[falcon_alliance.Match, str]]]: A list of Match objects representing each match a team played or an EventTeamStatus object to represent the team's status during an event or a list of strings representing the keys of the matches the team played in or a list of Award objects to represent award(s) a team got during an event.
         """  # noqa
         if not awards and not matches and not status:
             raise ValueError("Either awards, matches or status must be True for this function.")
@@ -960,7 +926,7 @@ class Team(BaseSchema):
         Retrieves all social media accounts of a team registered on TBA.
 
         Returns:
-            A list of Media objects representing each social media account of a team. May be empty if a team has no social media accounts.
+            typing.List[falcon_alliance.Media]: A list of Media objects representing each social media account of a team. May be empty if a team has no social media accounts.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("team", key=self.key, endpoint="social_media"), headers=self._headers)
