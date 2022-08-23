@@ -17,7 +17,27 @@ load_dotenv()
 
 
 class ApiClient:
-    """Base class that contains all requests to the TBA API."""
+    """Base class that contains all requests to the TBA API.
+
+    Examples:
+        If your API key isn't defined in your .env as `TBA_API_KEY` or `API_KEY`:
+
+        >>> with ApiClient(api_key=your_api_key) as api_client:
+        ...     print(api_client.team(4099).key)
+        frc4099
+
+        otherwise if it is:
+
+        >>> with ApiClient() as api_client:
+        ...     print(api_client.team(4099).key)
+        frc4099
+
+        All code, regardless of if it uses `ApiClient`'s methods or not must be in this context manager. For example:
+
+        >>> with ApiClient():
+        ...     print(Team(4099).event("2022iri", matches=True, keys=True))
+        ["2022iri_f1m1", "2022iri_f1m2", ...]
+    """
 
     def __init__(self, api_key: str = None):
         if api_key is None:
@@ -48,21 +68,18 @@ class ApiClient:
         InternalData.session = aiohttp.ClientSession()
 
     async def _get_year_events(
-        self, year: int, simple: typing.Optional[bool] = False, keys: typing.Optional[bool] = False
+        self, year: int, simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Event, str]]:
         """
         Retrieves all the events from a year.
 
         Parameters:
-            year:
-                An integer representing which year to return its events for.
-            simple:
-                A boolean representing whether some of the information regarding an event should be stripped to only contain relevant information about the event.
-            keys:
-                A boolean representing whether only the keys of the events should be returned.
+            year (int): An integer representing which year to return its events for.
+            simple (bool): A boolean representing whether some of the information regarding an event should be stripped to only contain relevant information about the event.
+            keys (bool): A boolean representing whether only the keys of the events should be returned.
 
         Returns:
-            A list of Event objects representing each event in a year or a list of strings representing all the keys of the events retrieved.
+            typing.List[typing.Union[falcon_alliance.Event, str]]: A list of Event objects representing each event in a year or a list of strings representing all the keys of the events retrieved.
         """  # noqa
         response = await InternalData.get(
             url=construct_url("events", year=year, simple=simple, keys=keys), headers=self._headers
@@ -83,20 +100,13 @@ class ApiClient:
         Returns a page of teams (a list of 500 teams or less)
 
         Parameters:
-            page_num:
-                An integer that specifies the page number of the list of teams that should be retrieved.
-                Teams are paginated by groups of 500, and if page_num is None, every team will be retrieved.
-            year:
-                An integer that specifies if only the teams that participated during that year should be retrieved.
-                If year is a range object, it will return all teams that participated in the years within the range object.
-                If year is None, this method will get all teams that have ever participated in the history of FRC.
-            simple:
-                A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the names of the FRC teams should be retrieved.
+            page_num (int, optional): An integer that specifies the page number of the list of teams that should be retrieved. Teams are paginated by groups of 500, and if page_num is None, every team will be retrieved.
+            year (int, range, optional): An integer that specifies if only the teams that participated during that year should be retrieved. If year is a range object, it will return all teams that participated in the years within the range object. If year is None, this method will get all teams that have ever participated in the history of FRC.
+            simple (bool): A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the names of the FRC teams should be retrieved.
 
         Returns:
-            A list of Team objects for each team in the list.
+            typing.List[typing.Union[falcon_alliance.Team, str]]: A list of Team objects for each team in the list.
         """  # noqa
         if page_num is not None:
             response = await InternalData.get(
@@ -116,29 +126,26 @@ class ApiClient:
         Retrieves all FRC districts during a year.
 
         Parameters:
-            year:
-                An integer representing the year to retrieve its FRC districts from.
+            year (int): An integer representing the year to retrieve its FRC districts from.
 
         Returns:
-            A list of District objects with each object representing an active district of that year.
-        """
+            typing.List[falcon_alliance.District]: A list of District objects with each object representing an active district of that year.
+        """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("districts", year=year), headers=self._headers)
         )
         return [District(**district_data) for district_data in response]
 
-    def event(self, event_key: str, simple: typing.Optional[bool] = False) -> Event:
+    def event(self, event_key: str, simple: bool = False) -> Event:
         """
         Retrieves and returns a record of teams based on the parameters given.
 
         Parameters:
-            event_key:
-                A string representing a unique key assigned to an event to set it apart from others.
-            simple:
-                A boolean that specifies whether the results for the event should be 'shortened' and only contain more relevant information.
+            event_key (str): A string representing a unique key assigned to an event to set it apart from others.
+            simple (bool): A boolean that specifies whether the results for the event should be 'shortened' and only contain more relevant information.
 
         Returns:
-            A Team object representing the data given.
+            falcon_alliance.Event: An Event object representing the data given.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("event", key=event_key, simple=simple), headers=self._headers)
@@ -146,21 +153,18 @@ class ApiClient:
         return Event(**response)
 
     def events(
-        self, year: typing.Union[range, int], simple: typing.Optional[bool] = False, keys: typing.Optional[bool] = False
+        self, year: typing.Union[range, int], simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Event, str]]:
         """
         Retrieves all the events from certain year(s).
 
         Parameters:
-            year:
-                An integer representing which year to return its events for o range object representing all the years events should be returned from.
-            simple:
-                A boolean representing whether some of the information regarding an event should be stripped to only contain relevant information about the event.
-            keys:
-                A boolean representing whether only the keys of the events should be returned.
+            year (int, range): An integer representing which year to return its events for o range object representing all the years events should be returned from.
+            simple (bool): A boolean representing whether some of the information regarding an event should be stripped to only contain relevant information about the event.
+            keys (bool): A boolean representing whether only the keys of the events should be returned.
 
         Returns:
-            A list of Event objects representing each event in certain year(s) or a list of strings representing all the keys of the events retrieved.
+            typing.List[typing.Union[falcon_alliance.Event, str]]: A list of Event objects representing each event in certain year(s) or a list of strings representing all the keys of the events retrieved.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
@@ -185,17 +189,13 @@ class ApiClient:
         Per TBA, the timeseries data is in development and therefore you should NOT rely on it.
 
         Parameters:
-            match_key:
-                A string representing a unique key assigned to a match to set it apart from others.
-            simple:
-                A boolean that specifies whether the results for each match should be 'shortened' and only contain more relevant information.
-            timeseries:
-                A boolean that specifies whether match timeseries data should be retrieved from a match.
-            zebra_motionworks:
-                A boolean that specifies whether data about where robots went during a match should be retrieved. Using this parameter, there may be no data due to the fact that very few matches use the Zebra MotionWorks technology required to get data on where the robots go during a match.
+            match_key (str): A string representing a unique key assigned to a match to set it apart from others.
+            simple (bool): A boolean that specifies whether the results for each match should be 'shortened' and only contain more relevant information.
+            timeseries (bool): A boolean that specifies whether match timeseries data should be retrieved from a match.
+            zebra_motionworks (bool): A boolean that specifies whether data about where robots went during a match should be retrieved. Using this parameter, there may be no data due to the fact that very few matches use the Zebra MotionWorks technology required to get data on where the robots go during a match.
 
         Returns:
-            A Match object containing information about the match or a Match.ZebraMotionworks object representing data about where teams' robots went during the match (may not have any data for all teams or even data altogether and if so will return None) or a list of dictionaries containing timeseries data for a match.
+            typing.Optional[typing.Union[typing.List[dict], falcon_alliance.Match, falcon_alliance.Match.ZebraMotionworks]]: A Match object containing information about the match or a Match.ZebraMotionworks object representing data about where teams' robots went during the match (may not have any data for all teams or even data altogether and if so will return None) or a list of dictionaries containing timeseries data for a match.
         """  # noqa
         if (simple, timeseries, zebra_motionworks).count(True) > 1:
             raise ValueError(
@@ -226,7 +226,7 @@ class ApiClient:
         Retrieves information about TBA's API status.
 
         Returns:
-            An APIStatus object containing information about TBA's API status.
+            falcon_alliance.APIStatus: An APIStatus object containing information about TBA's API status.
         """
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("status").rstrip("/"), headers=self._headers)
@@ -238,13 +238,11 @@ class ApiClient:
         Retrieves and returns a record of teams based on the parameters given.
 
         Parameters:
-            team_key:
-                A string representing a unique key assigned to a team to set it apart from others (in the form of frcXXXX) where XXXX is the team number.
-            simple:
-                A boolean that specifies whether the results for the team should be 'shortened' and only contain more relevant information.
+            team_key (str): A string representing a unique key assigned to a team to set it apart from others (in the form of frcXXXX) where XXXX is the team number.
+            simple (bool): A boolean that specifies whether the results for the team should be 'shortened' and only contain more relevant information.
 
         Returns:
-            A Team object representing the data given.
+            falcon_alliance.Team: A Team object representing the data given.
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("team", key=team_key, simple=simple), headers=self._headers)
@@ -258,20 +256,13 @@ class ApiClient:
         Retrieves and returns a record of teams based on the parameters given.
 
         Parameters:
-            page_num:
-                An integer that specifies the page number of the list of teams that should be retrieved.
-                Teams are paginated by groups of 500, and if page_num is None, every team will be retrieved.
-            year:
-                An integer that specifies if only the teams that participated during that year should be retrieved.
-                If year is a range object, it will return all teams that participated in the years within the range object.
-                If year is None, this method will get all teams that have ever participated in the history of FRC.
-            simple:
-                A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
-            keys:
-                A boolean that specifies whether only the names of the FRC teams should be retrieved.
+            page_num (int, optional): An integer that specifies the page number of the list of teams that should be retrieved. Teams are paginated by groups of 500, and if page_num is None, every team will be retrieved.
+            year (int, range, optional): An integer that specifies if only the teams that participated during that year should be retrieved. If year is a range object, it will return all teams that participated in the years within the range object. If year isn't passed in, this method will get all teams that have ever participated in the history of FRC.
+            simple (bool): A boolean that specifies whether the results for each team should be 'shortened' and only contain more relevant information.
+            keys (bool): A boolean that specifies whether only the names of the FRC teams should be retrieved.
 
         Returns:
-            A list of Team objects for each team in the list.
+            typing.List[typing.Union[falcon_alliance.Team, str]]: A list of Team objects for each team in the list or a list of strings each representing a team's key.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")

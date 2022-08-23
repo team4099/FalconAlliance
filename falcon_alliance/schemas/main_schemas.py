@@ -830,7 +830,7 @@ class Team(BaseSchema):
             statuses (bool): A boolean that specifies whether a key/value pair of the statuses of teams in an event should be returned.
 
         Returns:
-            typing.Union[typing.List[typing.Union[falcon_allianc.Event, str]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
+            typing.Union[typing.List[typing.Union[falcon_alliance.Event, str]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
         """  # noqa
         if simple and keys:
             raise ValueError("simple and keys cannot both be True, you must choose one mode over the other.")
