@@ -1,2 +1,0 @@
-class TBAError(Exception):
-    pass

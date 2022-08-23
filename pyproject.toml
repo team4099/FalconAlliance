@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "falcon-alliance"
-version = "0.0.a0"
+name = "falcon_alliance"
+version = "0.0.a1"
 description = "A Pythonic library that attains FRC-related information from sources like The Blue Alliance and more."
 authors = ["The Falcons - Team 4099 <contact@team4099.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7"
 aiohttp = "~=3.8.1"
 aiohttp-client-cache = "~=0.7.3"
 coverage = "~=6.4.4"
