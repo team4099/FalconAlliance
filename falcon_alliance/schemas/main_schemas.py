@@ -559,7 +559,7 @@ class Team(BaseSchema):
         key (str): TBA team key with the format frcXXXX with XXXX representing the team number.
         team_number (int): Official team number issued by FIRST.
         nickname (str, optional): Team nickname provided by FIRST.
-        name (str): Official long name registered with FIRST.
+        name (str, optional): Official long name registered with FIRST.
         school_name (str, optional): Name of team school or affilited group registered with FIRST.
         city (str, optional): City of team derived from parsing the address registered with FIRST.
         state_prov (str, optional): State of team derived from parsing the address registered with FIRST.
