@@ -11,7 +11,23 @@ except ImportError:
 
 
 class Match(BaseSchema):
-    """Class representing a match's metadata with methods to get match specific data."""
+    """Class representing a match's metadata with methods to get match specific data.
+
+    Attributes:
+        key (str): TBA match key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may be appended to the competition level if more than one match in required per set.
+        comp_level (str, optional): The competition level the match was played at.
+        set_number (int, optional): The set number in a series of matches where more than one match is required in the match series.
+        match_number (int, optional): The match number of the match in the competition level.
+        alliances (list[falcon_alliance.Match.Alliance], optional): A list of alliances, the teams on the alliances, and their score.
+        winning_alliance (str, optional): The color (red/blue) of the winning alliance. Will contain an empty string in the event of no winner, or a tie.
+        event_key (str, optional): Event key of the event the match was played at.
+        time (datetime.datetime, optional): UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the scheduled match time, as taken from the published schedule.
+        actual_time (datetime.datetime, optional): UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of actual match start time.
+        predicted_time (datetime.datetime, optional): UNIX timestamp (seconds since 1-Jan-1970 00:00:00) of the TBA predicted match start time.
+        post_result_time (datetime.datetime, optional): UNIX timestamp (seconds since 1-Jan-1970 00:00:00) when the match result was posted.
+        score_breakdown (dict, optional): Score breakdown for auto, teleop, etc. points. Varies from year to year. May be None.
+        videos (list, optional): A list of video objects associated with this match.
+    """  # noqa
 
     @dataclass()
     class Alliance:

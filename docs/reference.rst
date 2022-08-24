@@ -10,4 +10,5 @@ API Reference
    reference/district.rst
    reference/event.rst
    reference/event_team_status.rst
+   reference/match.rst
    reference/team.rst
