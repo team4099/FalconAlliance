@@ -3,7 +3,7 @@ import typing
 from .base_schema import BaseSchema
 
 
-class ApiStatus(BaseSchema):
+class APIStatus(BaseSchema):
     """Class containing information about TBA's API status.
 
     Attributes:

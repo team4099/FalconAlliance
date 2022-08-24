@@ -1,4 +1,4 @@
-from .api_status import ApiStatus
+from .api_status import APIStatus
 from .award import Award
 from .base_schema import BaseSchema
 from .event_team_status import EventTeamStatus
@@ -8,7 +8,7 @@ from .media import Media
 from .robot import Robot
 
 __all__ = [
-    "ApiStatus",
+    "APIStatus",
     "Award",
     "BaseSchema",
     "District",
