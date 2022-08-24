@@ -4,10 +4,27 @@ from enum import Enum
 
 
 class EventTeamStatus:
-    """Class representing a team's status during an event."""
+    """Class representing a team's status during an event.
+
+    Attributes:
+        qual (falcon_alliance.EventTeamStatus.Qualifications, optional): Information about the team's rank during qualifications. May be None if qualifications haven't begun yet.
+        alliance (falcon_alliance.EventTeamStatus.Alliance, optional): Information about the alliance a team is on, if they are on one. May be None if the team didn't make it onto an alliance.
+        playoff (falcon_alliance.EventTeamStatus.Playoff, optional): Playoff status for this team, may be None if the team did not make playoffs, or playoffs have not begun.
+        alliance_status_str (str, optional): An HTML formatted string suitable for display to the user containing the team's alliance pick status.
+        playoff_status_str (str, optional): An HTML formatter string suitable for display to the user containing the team's playoff status.
+        overall_status_str (str, optional): An HTML formatted string suitable for display to the user containing the team's overall status summary of the event.
+        next_match_key (str, optional): TBA match key for the next match the team is scheduled to play in at this event, or None.
+        last_match_key (str, optional): TBA match key for the last match the team played in at this event, or None.
+    """  # noqa
 
     class Status(Enum):
-        """Enum class representing the status of the team during an event"""
+        """Enum class representing the status of the team during an event.
+
+        Attributes:
+            WON (int): Representing if a team won a certain level.
+            ELIMINATED (int): Representing if a team was eliminated at a certain level.
+            PLAYING (int): Representing if a team is currently playing at that level.
+        """
 
         WON = 1
         ELIMINATED = 2
