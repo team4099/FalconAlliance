@@ -14,4 +14,5 @@ Contents
    :maxdepth: 2
 
    Home <self>
+   getting_started
    reference
