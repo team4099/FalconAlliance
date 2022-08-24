@@ -10,7 +10,7 @@ class Media(BaseSchema):
         type (str, optional): String type of the media element.
         foreign_key (str): The key used to identify this media on the media site.
         details (dict, optional): If required, a JSON dict of additional media information.
-        preferred (boolean, optional): True if the media is of high quality.
+        preferred (bool, optional): True if the media is of high quality.
         direct_url (str, optional): Direct URL to the media.
         view_url (str, optional): The URL that leads to the full web page for the media, if one exists.
     """

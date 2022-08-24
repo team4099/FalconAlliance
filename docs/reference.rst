@@ -12,4 +12,5 @@ API Reference
    reference/event_team_status.rst
    reference/match.rst
    reference/media.rst
+   reference/robot.rst
    reference/team.rst
