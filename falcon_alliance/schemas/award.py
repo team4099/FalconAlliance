@@ -22,6 +22,8 @@ class Award(BaseSchema):
 
     @dataclass
     class AwardRecipient:
+        """Class containing information about an award's recipient."""
+
         team_key: str
         awardee: typing.Optional[str]
 
