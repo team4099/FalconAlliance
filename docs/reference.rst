@@ -9,4 +9,5 @@ API Reference
    reference/base_schema.rst
    reference/district.rst
    reference/event.rst
+   reference/event_team_status.rst
    reference/team.rst
