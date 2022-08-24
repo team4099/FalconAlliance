@@ -6,6 +6,7 @@ API Reference
    reference/api_client.rst
    reference/api_status.rst
    reference/award.rst
+   reference/base_schema.rst
    reference/district.rst
    reference/event.rst
    reference/team.rst
