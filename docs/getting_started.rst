@@ -23,13 +23,18 @@ When accessing data from TBA (The Blue Alliance)'s API, all code regardless of w
    with ApiClient(api_key=YOUR_API_KEY) as api_client:
        # Your code goes here
 
-If you aren't using the ``ApiClient`` instance itself, you can remove the ``as api_client`` part. This portion sets an alliance to the instance so you can reference it in the code itself.
 
-The purpose of the ``with`` block here is to close the client session used for sending requests to the TBA API. Without the ``with`` block, the session will be unclosed and errors might be propagated based on that, therefore we strongly suggest to use the ``with`` block.
+The following code sets ``api_client`` to the instance you made of the ``ApiClient`` class, so now you can call the corresponding methods from TBA's API implemented into the ``ApiClient`` class.
 
-If you haven't seen this syntax before, ``with`` blocks are known as context managers and are used to manage resources in some way. You may have seen these blocks in the context of opening and closing files, and they're generally used to ensure that resources are closed or managed with once the block of code is finished running.
+.. warning::
+   If you don't need to use the ``ApiClient`` instance and aren't sending requests to base endpoints (eg finding a team's matches, events, etc.), you can remove the ``as api_client`` portion of the code as it is redundant if you aren't calling methods upon the instance itself.
 
-For more information about context managers, check out `this article <https://realpython.com › python-wit...Context Managers and Python's with Statement>`_.
+The purpose of the ``with`` block here is to close the client session used for sending requests to the TBA API. Without the ``with`` block, the session will be unclosed and errors might be propagated based on that, therefore it is required to use the ``with`` block.
+
+.. note::
+   If you haven't seen this syntax before, ``with`` blocks are known as context managers and are used to manage resources in some way. You may have seen these blocks in the context of opening and closing files, and they're generally used to ensure that resources are closed or managed with once the block of code is finished running.
+
+   For more information about context managers, check out `this article <https://realpython.com › python-wit...Context Managers and Python's with Statement>`_.
 
 .. _installation:
 
