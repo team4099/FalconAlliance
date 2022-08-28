@@ -1,12 +1,9 @@
-Getting Started
-===============
-
 Quick Start
------------
+===========
 Welcome to FalconAlliance! This section goes over everything you need to know to start using this library!
 
 Prerequisites
-^^^^^^^^^^^^^
+-------------
 
 **Python:** FalconAlliance supports Python 3.7+ and you should know a little bit of Python before diving into FalconAlliance! However, if you're confused about something, the documentation should explain it clearly.
 
@@ -14,7 +11,7 @@ Prerequisites
 
 
 Building Block of FalconAlliance Code
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------------------
 
 When accessing data from TBA (The Blue Alliance)'s API, all code regardless of whether or not you request to one of the base endpoints must include the following code to start off with:
 
@@ -41,9 +38,11 @@ The purpose of the ``with`` block here is to close the client session used for s
 .. _installation:
 
 Common Tasks
-^^^^^^^^^^^^
+------------
 
-**Accessing Specific Data**
+Accessing Specific Data
+^^^^^^^^^^^^^^^^^^^^^^^
+
 In the event that you want to access specific data, such as data pertaining to a team, event or district, you can use the corresponding classes' methods to do so.
 
 For example, if you wanted to print a team's matches during a year, you could do:
@@ -83,12 +82,3 @@ To find out more about the methods you could use to retrieve specific data, chec
    - :ref:`falcon_alliance.District` (for retrieving district specific data)
    - :ref:`falcon_alliance.Event` (for retrieving event specific data)
    - :ref:`falcon_alliance.Team` (for retrieving team specific data)
-
-Installation
-------------
-
-FalconAlliance supports Python 3.7+, to install FalconAlliance use ``pip``.
-
-.. code-block:: console
-
-   (.venv) $ pip install falcon-alliance

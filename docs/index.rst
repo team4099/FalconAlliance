@@ -11,8 +11,24 @@ Contents
 --------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
+   :caption: Getting Started
 
-   Home <self>
-   getting_started
-   reference
+   getting_started/quick_start
+   getting_started/installation
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API Reference
+
+   reference/api_client.rst
+   reference/api_status.rst
+   reference/award.rst
+   reference/base_schema.rst
+   reference/district.rst
+   reference/event.rst
+   reference/event_team_status.rst
+   reference/match.rst
+   reference/media.rst
+   reference/robot.rst
+   reference/team.rst
