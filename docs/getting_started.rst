@@ -18,7 +18,7 @@ Building Block of FalconAlliance Code
 
 When accessing data from TBA (The Blue Alliance)'s API, all code regardless of whether or not you request to one of the base endpoints must include the following code to start off with:
 
-:: code-block python
+.. code-block:: python
 
    with ApiClient(api_key=YOUR_API_KEY) as api_client:
        # Your code goes here
