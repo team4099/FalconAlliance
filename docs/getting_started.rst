@@ -26,10 +26,10 @@ When accessing data from TBA (The Blue Alliance)'s API, all code regardless of w
        # Your code goes here
 
 
-The following code sets ``api_client`` to the instance you made of falcon_alliance.ApiClient, so now you can call the corresponding methods from TBA's API implemented into falcon_alliance.ApiClient.
+The following code sets ``api_client`` to the instance you made of :doc:`reference/api_client.rst`, so now you can call the corresponding methods from TBA's API implemented into falcon_alliance.ApiClient.
 
 .. warning::
-   If you don't need to use the falcon_alliance.ApiClient instance and aren't sending requests to base endpoints (eg finding a team's matches, events, etc.), you can remove the ``as api_client`` portion of the code as it is redundant if you aren't calling methods upon the instance itself.
+   If you don't need to use the :doc:`reference/api_client.rst` instance and aren't sending requests to base endpoints (eg finding a team's matches, events, etc.), you can remove the ``as api_client`` portion of the code as it is redundant if you aren't calling methods upon the instance itself.
 
 The purpose of the ``with`` block here is to close the client session used for sending requests to the TBA API. Without the ``with`` block, the session will be unclosed and errors might be propagated based on that, therefore it is required to use the ``with`` block.
 
@@ -80,9 +80,9 @@ Or, if you wanted to print all teams in a district you could do:
 These are just a few examples to show the hierarchy of FalconAlliance code and display how in order to access specific data, there are classes and corresponding methods within those classes to retrieve said data.
 
 To find out more about the methods you could use to retrieve specific data, check out the following:
-   - falcon_alliance.District (for retrieving district specific data)
-   - falcon_alliance.Event (for retrieving event specific data)
-   - falcon_alliance.Team (for retrieving team specific data)
+   - :doc:`reference/district.rst` (for retrieving district specific data)
+   - :doc:`reference/event.rst` (for retrieving event specific data)
+   - :doc:`reference/team.rst` (for retrieving team specific data)
 
 Installation
 ------------
