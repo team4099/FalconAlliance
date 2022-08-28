@@ -40,6 +40,50 @@ The purpose of the ``with`` block here is to close the client session used for s
 
 .. _installation:
 
+Common Idioms
+^^^^^^^^^^^^^
+
+**Accessing Specific Data**
+In the event that you want to access specific data, such as data pertaining to a team, event or district, you can use the corresponding classes' methods to do so.
+
+For example, if you wanted to print a team's matches during a year, you could do:
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY):
+       team_4099 = falcon_alliance.Team(4099)
+       print(team_4099.matches(year=2022))
+
+Or, if you wanted to print all matches that occurred during an event you could do:
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY):
+       einsteins = falcon_alliance.Event("2022cmptx")
+       print(einsteins.matches())
+
+Or, if you wanted to print all teams in a district you could do:
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY):
+       chesapeake_district = falcon_alliance.District("2022chs")
+       print(chesapeake_district.teams())
+
+
+These are just a few examples to show the hierarchy of FalconAlliance code and display how in order to access specific data, there are classes and corresponding methods within those classes to retrieve said data.
+
+To find out more about the methods you could use to retrieve specific data, check out the following:
+   - falcon_alliance.District (for retrieving district specific data)
+   - falcon_alliance.Event (for retrieving event specific data)
+   - falcon_alliance.Team (for retrieving team specific data)
+
 Installation
 ------------
 
