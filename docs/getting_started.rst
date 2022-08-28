@@ -24,10 +24,10 @@ When accessing data from TBA (The Blue Alliance)'s API, all code regardless of w
        # Your code goes here
 
 
-The following code sets ``api_client`` to the instance you made of the ``ApiClient`` class, so now you can call the corresponding methods from TBA's API implemented into the ``ApiClient`` class.
+The following code sets ``api_client`` to the instance you made of falcon_alliance.ApiClient, so now you can call the corresponding methods from TBA's API implemented into falcon_alliance.ApiClient.
 
 .. warning::
-   If you don't need to use the ``ApiClient`` instance and aren't sending requests to base endpoints (eg finding a team's matches, events, etc.), you can remove the ``as api_client`` portion of the code as it is redundant if you aren't calling methods upon the instance itself.
+   If you don't need to use the falcon_alliance.ApiClient instance and aren't sending requests to base endpoints (eg finding a team's matches, events, etc.), you can remove the ``as api_client`` portion of the code as it is redundant if you aren't calling methods upon the instance itself.
 
 The purpose of the ``with`` block here is to close the client session used for sending requests to the TBA API. Without the ``with`` block, the session will be unclosed and errors might be propagated based on that, therefore it is required to use the ``with`` block.
 
