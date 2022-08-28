@@ -1,3 +1,5 @@
+.. _falcon_alliance.Event:
+
 falcon_alliance.Event
 =====================
 

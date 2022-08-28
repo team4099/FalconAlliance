@@ -1,3 +1,5 @@
+.. _falcon_alliance.District:
+
 falcon_alliance.District
 ========================
 
