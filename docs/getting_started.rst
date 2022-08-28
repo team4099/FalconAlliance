@@ -20,7 +20,9 @@ When accessing data from TBA (The Blue Alliance)'s API, all code regardless of w
 
 .. code-block:: python
 
-   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
        # Your code goes here
 
 
