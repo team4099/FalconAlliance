@@ -40,8 +40,8 @@ The purpose of the ``with`` block here is to close the client session used for s
 
 .. _installation:
 
-Common Idioms
-^^^^^^^^^^^^^
+Common Tasks
+^^^^^^^^^^^^
 
 **Accessing Specific Data**
 In the event that you want to access specific data, such as data pertaining to a team, event or district, you can use the corresponding classes' methods to do so.
