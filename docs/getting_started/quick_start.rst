@@ -100,7 +100,7 @@ For example, if you want to print all the teams competing in the 2022 FRC season
 .. warning::
    The ``as api_client`` part is required for retrieving general data, since otherwise the :ref:`falcon_alliance.ApiClient` instance won't be set to a variable. However, you can change the name after ``as`` to whatever you want, for example ``as tba_api_client``.
 
-Storing your API key as an Environment Variable
+Storing your API Key as an Environment Variable
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Passing in your TBA API key to :ref:`falcon_alliance.ApiClient` every time gets redundant and you risk exposing your API key.
@@ -119,6 +119,8 @@ You could also write:
    API_KEY=your_api_key_goes_here
 
 and it would be valid.
+
+If you're worried that your API key will be leaked to Github when you push your code with this new file, don't worry! .env is not pushed to Github among with other files starting with . as they're considered "hidden".
 
 .. attention::
    Make sure that the API key you put in as an environment variable is your TBA API key.
