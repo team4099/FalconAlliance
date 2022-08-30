@@ -82,3 +82,20 @@ To find out more about the methods you could use to retrieve specific data, chec
    - :ref:`falcon_alliance.District` (for retrieving district specific data)
    - :ref:`falcon_alliance.Event` (for retrieving event specific data)
    - :ref:`falcon_alliance.Team` (for retrieving team specific data)
+
+Accessing General Data
+^^^^^^^^^^^^^^^^^^^^^^
+
+For accessing general data (i.e. all teams in FRC or all events in a certain year rather than a specific team or event), you can use :ref:`falcon_alliance.ApiClient`.
+
+For example, if you want to print all the teams competing in the 2022 FRC season, you could do:
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       print(api_client.teams(year=2022))
+
+.. warning::
+   The ``as api_client`` part is required for retrieving general data, since otherwise the :ref:`falcon_alliance.ApiClient` instance won't be set to a variable. However, you can change the name after ``as`` to whatever you want, for example ``as tba_api_client``.
