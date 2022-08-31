@@ -65,7 +65,7 @@ class ApiClient:
     async def close(self) -> None:
         """Closes the ongoing session (`aiohttp.ClientSession`)."""
         await InternalData.session.close()
-        InternalData.session = aiohttp.ClientSession()
+        InternalData.session = None
 
     async def _get_year_events(
         self, year: int, simple: bool = False, keys: bool = False

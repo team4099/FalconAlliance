@@ -8,7 +8,7 @@ class BaseSchema:
         self._as_dictionary = dict(vars(self))
 
         for attr_name, attr_value in self._as_dictionary.items():
-            if attr_value is None or attr_name.startswith("_"):
+            if attr_value is None or attr_name.startswith("_"):  # pragma: no cover
                 continue
 
             if isinstance(attr_value, dict):
