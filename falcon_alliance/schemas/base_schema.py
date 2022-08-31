@@ -5,9 +5,10 @@ class BaseSchema:
 
     def __init__(self):
         attributes_formatted = ""
+        self._as_dictionary = dict(vars(self))
 
-        for attr_name, attr_value in vars(self).items():
-            if attr_value is None:
+        for attr_name, attr_value in self._as_dictionary.items():
+            if attr_value is None or attr_name.startswith("_"):
                 continue
 
             if isinstance(attr_value, dict):
@@ -21,8 +22,11 @@ class BaseSchema:
 
         self._attributes_formatted = attributes_formatted[:-2]
 
-    def __eq__(self, other):
-        return vars(self) == vars(other)
+    def __getitem__(self, item: str):
+        return self._as_dictionary[item]
+
+    def __eq__(self, other: "BaseSchema"):
+        return self._as_dictionary == other._as_dictionary
 
     def __repr__(self):  # pragma: no cover
         return f"{type(self).__name__}({self._attributes_formatted})"

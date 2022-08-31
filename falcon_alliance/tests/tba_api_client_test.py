@@ -34,6 +34,13 @@ def test_team_simple():
         assert team4099 != team4099_simple
 
 
+def test_dictionary_syntax():
+    """Tests a schema's "dictionary" syntax that allows you to retrieve attributes via schema["name"]"""
+    with ApiClient() as api_client:
+        team4099 = api_client.team("frc4099")
+        assert team4099["team_number"] == 4099
+
+
 def test_team_not_existing():
     """Tests `ApiClient.team` to ensure that it raises an error when you pass in an invalid team key."""
     with pytest.raises(TBAError, match="is not a valid team key"):
