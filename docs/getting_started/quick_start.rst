@@ -75,7 +75,6 @@ Or, if you wanted to print all teams in a district you could do:
        chesapeake_district = falcon_alliance.District("2022chs")
        print(chesapeake_district.teams())
 
-
 These are just a few examples to show the hierarchy of FalconAlliance code and display how in order to access specific data, there are classes and corresponding methods within those classes to retrieve said data.
 
 To find out more about the methods you could use to retrieve specific data, check out the following:
@@ -124,3 +123,31 @@ If you're worried that your API key will be leaked to Github when you push your 
 
 .. attention::
    Make sure that the API key you put in as an environment variable is your TBA API key.
+
+Accessing Attributes from Schemas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you call FalconAlliance methods, you'll probably have to deal with various classes in the return types of the methods you call.
+These classes represent the schemas from the TBA API, which essentially is just a grouping of data that falls under a certain 'category'.
+
+You can find the various schemas you'll be dealing within the return types and by itself in the ``API Reference`` section.
+
+However, we can access attributes via either **dot syntax** which is accessing an attribute like ``class_instance.attribute_name``. For example, if we want to access a team's state with dot syntax we can do:
+
+.. code-block:: python
+   import falcon_alliance
+
+   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+       team4099 = api_client.team("frc4099")
+       print(team4099.state_prov)
+
+Or you can access attributes via **dictionary syntax** which is accessing an attribute like ``class_instance["attribute_name"]``. For example, if we want to access a team's state with dictionary syntax we can do:
+
+.. code-block:: python
+   import falcon_alliance
+
+   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+       team4099 = api_client.team("frc4099")
+       print(team4099["state_prov"])
+
+This is useful for when you have code that you are migrating to FalconAlliance from sending requests raw and want to use existing syntax.
