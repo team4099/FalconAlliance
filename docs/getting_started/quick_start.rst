@@ -135,6 +135,7 @@ You can find the various schemas you'll be dealing within the return types and b
 However, we can access attributes via either **dot syntax** which is accessing an attribute like ``class_instance.attribute_name``. For example, if we want to access a team's state with dot syntax we can do:
 
 .. code-block:: python
+
    import falcon_alliance
 
    with ApiClient(api_key=YOUR_API_KEY) as api_client:
@@ -144,6 +145,7 @@ However, we can access attributes via either **dot syntax** which is accessing a
 Or you can access attributes via **dictionary syntax** which is accessing an attribute like ``class_instance["attribute_name"]``. For example, if we want to access a team's state with dictionary syntax we can do:
 
 .. code-block:: python
+
    import falcon_alliance
 
    with ApiClient(api_key=YOUR_API_KEY) as api_client:
