@@ -50,3 +50,33 @@ Retrieving the Keys of Teams that Played in a Season
 
    with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
        first_500_teams = api_client.teams(year=2022, keys=True)  # equal to ["frc1", ...] and the key of any other team that played in 2022.
+
+Retrieving All Events in a Year
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       all_events = api_client.events(year=2022) # equal to [Event(event_key="2022cmptx"), ...] containing Event objects for all events that occurred in 2022.
+
+Retrieving All Events Across Multiple Seasons
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       all_events = api_client.events(year=range(2017, 2019)) # equal to [Event(event_key="2017chcmp"), Event(event_key="2018chcmp"), ...] containing Event objects for all events that occurred in 2017 and 2018.
+
+Retrieving the Keys of the Events in a Season
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       first_500_teams = api_client.events(year=2022, keys=True)  # equal to ["2022cmptx", ...] and the key of any other event in 2022.
