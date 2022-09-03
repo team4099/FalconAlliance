@@ -40,11 +40,9 @@ Retrieving Teams In Groups of 500
    import falcon_alliance
 
    with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
-       # equal to [Team(team_number=1, ...), ...] containing all teams with a team number between 1 and 500
-       # that played in 2022.
+       # equal to [Team(team_number=1, ...), ...] containing all teams with a team number between 1 and 500 that played in 2022.
        first_500_teams = api_client.teams(year=2022, page_num=1)
-       # equal to [Team(team_number=500, ...), ...] and any other team that played in 2022
-       # and has a team number between 500 and 1000.
+       # equal to [Team(team_number=500, ...), ...] and any other team that played in 2022 and has a team number between 500 and 1000.
        teams_from_500_to_1000 = api_client.teams(year=2022, page_num=2)
 .. tip::
    To save time, if you're only looking for a certain group of teams, you can use the ``page_num`` parameter to retrieve the page number of the group of 500 teams that you want, as it only calls one request per season.
@@ -103,3 +101,6 @@ Retrieve All Districts Present in a Season
    with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
        # equal to [District(key="2022chs", ...), ...] containing all districts that were present in 2022.
        all_district = api_client.districts(year=2022)
+
+Team-Specific Examples
+----------------------
