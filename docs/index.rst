@@ -16,6 +16,7 @@ Contents
 
    getting_started/quick_start
    getting_started/installation
+   getting_started/examples
 
 .. toctree::
    :maxdepth: 1
