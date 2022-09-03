@@ -77,8 +77,7 @@ Retrieving All Events Across Multiple Seasons
    import falcon_alliance
 
    with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
-       # equal to [Event(event_key="2017chcmp"), Event(event_key="2018chcmp"), ...] containing Event objects
-       # for all events in 2017 and 2018.
+       # equal to [Event(event_key="2017chcmp"), Event(event_key="2018chcmp"), ...] containing Event objects for all events in 2017 and 2018.
        all_events = api_client.events(year=range(2017, 2019))
 Retrieving the Keys of the Events in a Season
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -104,3 +103,27 @@ Retrieve All Districts Present in a Season
 
 Team-Specific Examples
 ----------------------
+
+Retrieve the Events a Team Played in a Certain Year
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       # equal to [Event(key="2022cmptx", ...), ...] containing all events Team 4099 played in during 2022.
+       team4099 = falcon_alliance.Team(4099)
+       team4099_events = team4099.events(year=2022)
+
+Retrieve the Keys of the Events a Team Played in a Certain Year
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
+       # equal to ["2022cmptx", "2022chcmp", ...] containing the keys of all events Team 4099 played in 2022.
+       team4099 = falcon_alliance.Team(4099)
+       team4099_events = team4099.events(year=2022, keys=True)
