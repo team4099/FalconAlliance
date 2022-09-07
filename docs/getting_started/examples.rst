@@ -31,3 +31,22 @@ Getting the Average Rookie Year of Teams in a District
 
       chs_rookie_years = [team.rookie_year for team in chs_teams]
       rookie_year_average = sum(chs_rookie_years) / len(chs_rookie_years)
+
+Finding the Maximum Score from all the Matches a Team Played During a Year
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+   import FalconAlliance.falcon_alliance as falcon_alliance
+
+   with falcon_alliance.ApiClient() as api_client:
+       team4099 = falcon_alliance.Team(4099)
+       match_scores = []
+
+       for match in team4099.matches(year=2022):
+           if team4099.key in match.alliances["red"].team_keys:
+               match_scores.append(match.alliances["red"].score)
+           else:
+               match_scores.append(match.alliances["blue"].score)
+
+       maximum_match_score = max(match_scores)
