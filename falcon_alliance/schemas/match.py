@@ -96,12 +96,12 @@ class Match(BaseSchema):
 
         super().__init__()
 
-    def alliance_of(self, team_key: typing.Union[int, str]) -> typing.Optional[Alliance]:
+    def alliance_of(self, team_key: typing.Union[int, str, "Team"]) -> typing.Optional[Alliance]:
         """
         Returns the alliance of the team provided, can return None if a team is in neither of the alliances for a match.
 
         Args:
-            team_key: An integer representing the team number to search for in the alliance team keys or a string representing the team key to search for in the alliance team keys.
+            team_key (int, str, falcon_alliance.Team): An integer representing the team number to search for in the alliance team keys or a string representing the team key to search for in the alliance team keys or a Team object representing the team to get the alliance of.
         """  # noqa
         team_key = to_team_key(team_key)
 

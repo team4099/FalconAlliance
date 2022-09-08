@@ -44,9 +44,6 @@ Finding the Maximum Score from all the Matches a Team Played During a Year
        match_scores = []
 
        for match in team4099.matches(year=2022):
-           if team4099.key in match.alliances["red"].team_keys:
-               match_scores.append(match.alliances["red"].score)
-           else:
-               match_scores.append(match.alliances["blue"].score)
+           match_scores.append(match.alliance_of(team4099).score)
 
        maximum_match_score = max(match_scores)

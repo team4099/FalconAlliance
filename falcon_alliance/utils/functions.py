@@ -31,11 +31,16 @@ def construct_url(base_endpoint, **kwargs) -> str:
     )
 
 
-def to_team_key(team_number_or_key: typing.Union[int, str]) -> str:
+def to_team_key(team_number_or_key: typing.Union[int, str, "Team"]) -> str:  # noqa
     """
-    Returns a team key regardless on if the parameter is the team number or the team key itself.
+    Returns a team key regardless on if the parameter is the team number, the team key itself, or a Team object.
 
     Args:
-        team_number_or_key: An integer representing a team number or a string representing the key of a team.
-    """
-    return f"frc{team_number_or_key}" if isinstance(team_number_or_key, int) else team_number_or_key
+        team_number_or_key: An integer representing a team number or a string representing the key of a team or a Team object.
+    """  # noqa
+    if isinstance(team_number_or_key, int):  # pragma: no cover
+        return f"frc{team_number_or_key}"
+    elif isinstance(team_number_or_key, str):  # pragma: no cover
+        return team_number_or_key
+    else:  # pragma: no cover
+        return team_number_or_key.key
