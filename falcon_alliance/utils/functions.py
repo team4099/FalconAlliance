@@ -1,5 +1,7 @@
 __all__ = ["construct_url"]
 
+import typing
+
 
 def construct_url(base_endpoint, **kwargs) -> str:
     """
@@ -22,3 +24,13 @@ def construct_url(base_endpoint, **kwargs) -> str:
             ],
         )
     )
+
+
+def team_key(team_number_or_key: typing.Union[int, str]) -> str:
+    """
+    Returns a team key regardless on if the parameter is the team number or the team key itself.
+
+    Args:
+        team_number_or_key: An integer representing a team number or a string representing the key of a team.
+    """
+    return f"frc{team_number_or_key}" if isinstance(team_number_or_key, int) else team_number_or_key
