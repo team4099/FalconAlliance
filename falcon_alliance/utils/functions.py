@@ -1,4 +1,4 @@
-__all__ = ["construct_url"]
+__all__ = ["construct_url", "to_team_key"]
 
 import typing
 
@@ -26,7 +26,7 @@ def construct_url(base_endpoint, **kwargs) -> str:
     )
 
 
-def team_key(team_number_or_key: typing.Union[int, str]) -> str:
+def to_team_key(team_number_or_key: typing.Union[int, str]) -> str:
     """
     Returns a team key regardless on if the parameter is the team number or the team key itself.
 

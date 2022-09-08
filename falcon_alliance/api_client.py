@@ -233,17 +233,19 @@ class ApiClient:
         )
         return APIStatus(**response)
 
-    def team(self, team_key: str, simple: bool = False) -> Team:
+    def team(self, team_key: typing.Union[int, str], simple: bool = False) -> Team:
         """
         Retrieves and returns a record of teams based on the parameters given.
 
         Parameters:
-            team_key (str): A string representing a unique key assigned to a team to set it apart from others (in the form of frcXXXX) where XXXX is the team number.
+            team_key (int, str): A string representing a unique key assigned to a team to set it apart from others (in the form of frcXXXX) where XXXX is the team number or an integer representing the team number of a team.
             simple (bool): A boolean that specifies whether the results for the team should be 'shortened' and only contain more relevant information.
 
         Returns:
             falcon_alliance.Team: A Team object representing the data given.
         """  # noqa
+        team_key = to_team_key(team_key)
+
         response = InternalData.loop.run_until_complete(
             InternalData.get(url=construct_url("team", key=team_key, simple=simple), headers=self._headers)
         )
