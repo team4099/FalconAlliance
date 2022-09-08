@@ -95,3 +95,25 @@ class Match(BaseSchema):
         self.videos: typing.Optional[list] = kwargs.get("videos")
 
         super().__init__()
+
+    def alliance_of(self, team_key: typing.Union[int, str]) -> typing.Optional[Alliance]:
+        """
+        Returns the alliance of the team provided, can return None if a team is in neither of the alliances for a match.
+
+        Args:
+            team_key: An integer representing the team number to search for in the alliance team keys or a string representing the team key to search for in the alliance team keys.
+        """  # noqa
+        team_key = to_team_key(team_key)
+
+        if team_key in (
+            *self.alliances["red"].team_keys,
+            *self.alliances["red"].surrogate_team_keys,
+            *self.alliances["red"].dq_team_keys,
+        ):
+            return self.alliances["red"]
+        elif team_key in (
+            *self.alliances["blue"].team_keys,
+            *self.alliances["blue"].surrogate_team_keys,
+            *self.alliances["blue"].dq_team_keys,
+        ):
+            return self.alliances["blue"]

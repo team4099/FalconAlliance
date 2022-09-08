@@ -1,11 +1,11 @@
 import typing
 from enum import Enum
 
-__all__ = ["construct_url", "to_team_key"]
+__all__ = ["construct_url", "Metrics", "to_team_key"]
 
 
 class Metrics(Enum):
-    SCORE = 1
+    MATCH_SCORE = 1
 
 
 def construct_url(base_endpoint, **kwargs) -> str:

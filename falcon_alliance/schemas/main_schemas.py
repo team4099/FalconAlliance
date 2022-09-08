@@ -933,6 +933,21 @@ class Team(BaseSchema):
         )
         return [Media(**social_media_info) for social_media_info in response]
 
+    def min(self, year: typing.Union[range, int], metric: Metrics) -> Match:
+        """
+        Retrieves the minimum of a certain metric based on the year.
+
+        Args:
+            year (range, int): An integer representing the year to apply the metric to or a range object representing the years to apply the metric to.
+            metric (Metrics): An Enum object representing which metric to use to find the minimum of something relating to a team of your desire.
+
+        Returns:
+            Match: A Match object representing the match with the minimum score if Metrics.MATCH_SCORE is passed into `metric`.
+        """  # noqa
+        if metric == Metrics.MATCH_SCORE:
+            team_matches = self.matches(year)
+            return min(team_matches, key=lambda match: match.alliance_of(self.key).score)
+
     def __hash__(self) -> int:
         return self.team_number
 
