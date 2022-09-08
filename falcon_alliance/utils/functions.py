@@ -1,6 +1,11 @@
+import typing
+from enum import Enum
+
 __all__ = ["construct_url", "to_team_key"]
 
-import typing
+
+class Metrics(Enum):
+    SCORE = 1
 
 
 def construct_url(base_endpoint, **kwargs) -> str:
