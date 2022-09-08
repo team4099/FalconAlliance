@@ -300,3 +300,10 @@ def test_team_social_media():
         assert isinstance(team4099_social_media, list) and all(
             isinstance(social_media_account, Media) for social_media_account in team4099_social_media
         )
+
+
+def test_team_min_match_score():
+    """Tests `Team.min` to retrieve the minimum match score."""
+    with ApiClient():
+        minimum_match_score = Team(4099).min(2022, metric=Metrics.MATCH_SCORE)
+        assert isinstance(minimum_match_score, Match) and minimum_match_score.match_number == 29
