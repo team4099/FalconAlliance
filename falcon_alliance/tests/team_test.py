@@ -314,3 +314,19 @@ def test_team_min_oprs():
     with ApiClient():
         minimum_opr, event_with_opr = Team(4099).min(2022, metric=Metrics.OPR)
         assert isinstance(minimum_opr, float) and isinstance(event_with_opr, Event)
+
+
+def test_team_max_match_score():
+    """Tests `Team.max` to retrieve the maximum match score."""
+    with ApiClient():
+        max_match_score = Team(4099).max(2022, metric=Metrics.MATCH_SCORE)
+        assert isinstance(max_match_score, Match) and (
+            max_match_score.comp_level == "sf" and max_match_score.match_number == 2
+        )
+
+
+def test_team_max_oprs():
+    """Tests `Team.max` to retrieve the maximum OPR/DPR/CCWM."""
+    with ApiClient():
+        maximum_opr, event_with_opr = Team(4099).max(2022, metric=Metrics.OPR)
+        assert isinstance(maximum_opr, float) and isinstance(event_with_opr, Event)
