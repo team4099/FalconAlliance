@@ -933,7 +933,7 @@ class Team(BaseSchema):
         )
         return [Media(**social_media_info) for social_media_info in response]
 
-    def min(self, year: typing.Union[range, int], metric: Metrics) -> Match:
+    def min(self, year: typing.Union[range, int], metric: Metrics) -> typing.Union[Match, typing.Tuple[float, Event]]:
         """
         Retrieves the minimum of a certain metric based on the year.
 
@@ -942,11 +942,16 @@ class Team(BaseSchema):
             metric (Metrics): An Enum object representing which metric to use to find the minimum of something relating to a team of your desire.
 
         Returns:
-            Match: A Match object representing the match with the minimum score if Metrics.MATCH_SCORE is passed into `metric`.
+            typing.Union[Match, tuple[float, falcon_alliance.Event]]: A Match object representing the match with the minimum score if Metrics.MATCH_SCORE is passed into `metric` or a tuple containing the minimum OPR/DPR/CCWM for a team and the event where the team had said minimum OPR/DPR/CCWM if Metrics.OPR, Metrics.DPR or Metrics.CCWM is passed into `metric`.
         """  # noqa
         if metric == Metrics.MATCH_SCORE:
             team_matches = self.matches(year)
             return min(team_matches, key=lambda match: match.alliance_of(self.key).score)
+        elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
+            team_oprs = [
+                (getattr(event.oprs(), f"{metric.name.lower()}s")[self.key], event) for event in self.events(year)
+            ]
+            return min(team_oprs, key=lambda tup: tup[0])
 
     def __hash__(self) -> int:
         return self.team_number

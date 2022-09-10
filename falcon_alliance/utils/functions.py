@@ -6,6 +6,9 @@ __all__ = ["construct_url", "Metrics", "to_team_key"]
 
 class Metrics(Enum):
     MATCH_SCORE = 1
+    OPR = 2
+    DPR = 3
+    CCWM = 4
 
 
 def construct_url(base_endpoint, **kwargs) -> str:
