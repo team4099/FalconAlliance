@@ -948,9 +948,14 @@ class Team(BaseSchema):
             team_matches = self.matches(year)
             return min(team_matches, key=lambda match: match.alliance_of(self.key).score)
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
-            team_oprs = [
-                (getattr(event.oprs(), f"{metric.name.lower()}s")[self.key], event) for event in self.events(year)
-            ]
+            team_oprs = []
+
+            for event in self.events(year):
+                event_oprs = event.oprs()
+
+                if getattr(event_oprs, f"{metric.name.lower()}s"):
+                    team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
+
             return min(team_oprs, key=lambda tup: tup[0])
 
     def __hash__(self) -> int:

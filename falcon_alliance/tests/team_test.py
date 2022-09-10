@@ -307,3 +307,10 @@ def test_team_min_match_score():
     with ApiClient():
         minimum_match_score = Team(4099).min(2022, metric=Metrics.MATCH_SCORE)
         assert isinstance(minimum_match_score, Match) and minimum_match_score.match_number == 29
+
+
+def test_team_min_oprs():
+    """Tests `Team.min` to retrieve the minimum OPR/DPR/CCWM."""
+    with ApiClient():
+        minimum_opr, event_with_opr = Team(4099).min(2022, metric=Metrics.OPR)
+        assert isinstance(minimum_opr, float) and isinstance(event_with_opr, Event)
