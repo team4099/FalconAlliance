@@ -5,6 +5,8 @@ class BaseSchema:
 
     def __init__(self):
         attributes_formatted = ""
+        self.etag = ""
+
         self._as_dictionary = dict(vars(self))
 
         for attr_name, attr_value in self._as_dictionary.items():

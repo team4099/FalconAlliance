@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from re import match
 from statistics import mean
 
+import aiohttp
+
 from .award import Award
 from .base_schema import BaseSchema
 from .event_team_status import EventTeamStatus
@@ -21,6 +23,35 @@ except ImportError:
 
 __all__ = ["District", "Event", "Team"]
 PARSING_FORMAT = "%Y-%m-%d"
+
+
+def _caching_headers(func: typing.Callable) -> typing.Callable:
+    """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs) -> typing.Any:
+        """Wrapper for adding headers to cache the results from the TBA API."""
+
+        self.use_caching = use_caching
+        self.silent = silent
+
+        if etag:
+            self.etag = etag
+
+        try:
+            return func(self, *args, **kwargs)
+        except aiohttp.ContentTypeError:
+            if not silent:
+                raise NotModifiedSinceError from None
+            else:
+                return_type = str(func.__annotations__["return"]).lower()
+
+                if "list" in return_type:
+                    return []
+                elif "dict" in return_type:
+                    return {}
+
+    return wrapper
 
 
 class District(BaseSchema):
@@ -67,6 +98,7 @@ class District(BaseSchema):
 
         super().__init__()
 
+    @_caching_headers
     def events(
         self,
         simple: bool = False,
@@ -96,6 +128,7 @@ class District(BaseSchema):
         else:
             return [Event(**event_data) for event_data in response]
 
+    @_caching_headers
     def teams(
         self,
         simple: bool = False,
@@ -125,6 +158,7 @@ class District(BaseSchema):
         else:
             return [Team(**event_data) for event_data in response]
 
+    @_caching_headers
     def rankings(self) -> typing.List[Ranking]:
         """
         Retrieves a list of team district rankings for the given district.
@@ -389,6 +423,7 @@ class Event(BaseSchema):
 
         super().__init__()
 
+    @_caching_headers
     def alliances(self) -> typing.List[Alliance]:
         """Retrieves all alliances of an event.
 
@@ -404,6 +439,7 @@ class Event(BaseSchema):
         )
         return [self.Alliance(**alliance_info) for alliance_info in response]
 
+    @_caching_headers
     def awards(self) -> typing.List[Award]:
         """Retrieves all awards distributed in an event.
 
@@ -419,6 +455,7 @@ class Event(BaseSchema):
         )
         return [Award(**award_info) for award_info in response]
 
+    @_caching_headers
     def district_points(self) -> typing.Optional[DistrictPoints]:
         """Retrieves district points for teams during an event for both qualification and tiebreaker matches.
 
@@ -436,6 +473,7 @@ class Event(BaseSchema):
         if response:
             return self.DistrictPoints(**response)
 
+    @_caching_headers
     def insights(self) -> typing.Optional[Insights]:
         """Retrieves insights of an event (specific data about performance and the like at the event; specific by game).
         Insights can only be retrieved for any events from 2016 and onwards.
@@ -454,6 +492,7 @@ class Event(BaseSchema):
         if response:
             return self.Insights(**response)
 
+    @_caching_headers
     def matches(
         self, simple: bool = False, keys: bool = False, timeseries: bool = False
     ) -> typing.List[typing.Union[str, Match]]:
@@ -489,6 +528,7 @@ class Event(BaseSchema):
         else:
             return [Match(**match_data) for match_data in response]
 
+    @_caching_headers
     def oprs(self) -> OPRs:
         """Retrieves different metrics for all teams during an event.
         To see an explanation on OPR and other metrics retrieved from an event, see https://www.thebluealliance.com/opr.
@@ -507,6 +547,7 @@ class Event(BaseSchema):
         else:  # pragma: no cover
             return self.OPRs(oprs={}, dprs={}, ccwms={})
 
+    @_caching_headers
     def predictions(self) -> dict:
         """Retrieves predictions for matches of an event. May not work for all events since this endpoint is in beta per TBA.
 
@@ -522,6 +563,7 @@ class Event(BaseSchema):
         )
         return response
 
+    @_caching_headers
     def rankings(self) -> typing.Dict[str, Ranking]:
         """Retrieves a list of team rankings for an event.
 
@@ -545,6 +587,7 @@ class Event(BaseSchema):
 
         return rankings_dict
 
+    @_caching_headers
     def teams(
         self, simple: bool = False, keys: bool = False, statuses: bool = False
     ) -> typing.Union[typing.List[typing.Union[str, "Team"]], typing.Dict[str, EventTeamStatus]]:
@@ -645,6 +688,7 @@ class Team(BaseSchema):
 
         super().__init__()
 
+    @_caching_headers
     async def _get_year_events(
         self, year: int, simple: bool, keys: bool, statuses: bool
     ) -> typing.Union[typing.List[typing.Union[str, Event]], typing.Dict[str, EventTeamStatus]]:
@@ -678,6 +722,7 @@ class Team(BaseSchema):
                 if team_status_info
             }
 
+    @_caching_headers
     async def _get_year_matches(
         self, year: int, event_code: typing.Optional[str], simple: bool, keys: bool
     ) -> typing.List[Match]:
@@ -709,6 +754,7 @@ class Team(BaseSchema):
             else:
                 return [Match(**match_data) for match_data in response]
 
+    @_caching_headers
     async def _get_year_media(self, year: int, media_tag: typing.Optional[str] = None) -> typing.List[Media]:
         """
         Retrieves all the media of a certain team from a certain year and based off the media_tag if passed in.
@@ -730,6 +776,7 @@ class Team(BaseSchema):
         response = await InternalData.get(current_instance=self, url=url, headers=self._headers)
         return [Media(**media_data) for media_data in response]
 
+    @_caching_headers
     def awards(self, year: typing.Optional[typing.Union[range, int]] = None) -> typing.List[Award]:
         """
         Retrieves all awards a team has gotten either during its career or during certain year(s).
@@ -754,6 +801,7 @@ class Team(BaseSchema):
         else:
             return [Award(**award_data) for award_data in response]
 
+    @_caching_headers
     def years_participated(self) -> typing.List[int]:
         """Returns all the years this team has participated in."""
         response = InternalData.loop.run_until_complete(
@@ -765,6 +813,7 @@ class Team(BaseSchema):
         )
         return response
 
+    @_caching_headers
     def districts(self) -> typing.List[District]:
         """
         Retrieves a list of districts representing each year this team was in said district.
@@ -783,6 +832,7 @@ class Team(BaseSchema):
         )
         return [District(**district_data) for district_data in response]
 
+    @_caching_headers
     def matches(
         self,
         year: typing.Union[range, int],
@@ -810,14 +860,30 @@ class Team(BaseSchema):
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
                         asyncio.gather(
-                            *[self._get_year_matches(spec_year, event_code, simple, keys) for spec_year in year]
+                            *[
+                                self._get_year_matches(
+                                    spec_year,
+                                    event_code,
+                                    simple,
+                                    keys,
+                                    use_caching=self.use_caching,
+                                    etag=self.etag,
+                                    silent=self.silent,
+                                )
+                                for spec_year in year
+                            ]
                         )
                     )
                 )
             )
         else:
-            return InternalData.loop.run_until_complete(self._get_year_matches(year, event_code, simple, keys))
+            return InternalData.loop.run_until_complete(
+                self._get_year_matches(
+                    year, event_code, simple, keys, use_caching=self.use_caching, etag=self.etag, silent=self.silent
+                )
+            )
 
+    @_caching_headers
     def media(self, year: typing.Union[range, int], media_tag: typing.Optional[str] = None) -> typing.List[Media]:
         """
         Retrieves all the media of a certain team based off the parameters.
@@ -833,13 +899,27 @@ class Team(BaseSchema):
             return list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self._get_year_media(spec_year, media_tag) for spec_year in year])
+                        asyncio.gather(
+                            *[
+                                self._get_year_media(
+                                    spec_year,
+                                    media_tag,
+                                    use_caching=self.use_caching,
+                                    etag=self.etag,
+                                    silent=self.silent,
+                                )
+                                for spec_year in year
+                            ]
+                        )
                     )
                 )
             )
         else:
-            return InternalData.loop.run_until_complete(self._get_year_media(year, media_tag))
+            return InternalData.loop.run_until_complete(
+                self._get_year_media(year, media_tag, use_caching=self.use_caching, etag=self.etag, silent=self.silent)
+            )
 
+    @_caching_headers
     def robots(self) -> typing.List[Robot]:
         """
         Retrieves a list of robots representing each robot for every year the team has played if they named the robot.
@@ -856,6 +936,7 @@ class Team(BaseSchema):
         )
         return [Robot(**robot_data) for robot_data in response]
 
+    @_caching_headers
     def events(
         self,
         year: typing.Union[range, int] = None,
@@ -892,14 +973,30 @@ class Team(BaseSchema):
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
                         asyncio.gather(
-                            *[self._get_year_events(spec_year, simple, keys, statuses) for spec_year in year]
+                            *[
+                                self._get_year_events(
+                                    spec_year,
+                                    simple,
+                                    keys,
+                                    statuses,
+                                    use_caching=self.use_caching,
+                                    etag=self.etag,
+                                    silent=self.silent,
+                                )
+                                for spec_year in year
+                            ]
                         )
                     )
                 )
             )
         else:
-            return InternalData.loop.run_until_complete(self._get_year_events(year, simple, keys, statuses))
+            return InternalData.loop.run_until_complete(
+                self._get_year_events(
+                    year, simple, keys, statuses, use_caching=self.use_caching, etag=self.etag, silent=self.silent
+                )
+            )
 
+    @_caching_headers
     def event(
         self,
         event_key: str,
@@ -965,6 +1062,7 @@ class Team(BaseSchema):
         else:
             return EventTeamStatus(event_key, response)
 
+    @_caching_headers
     def social_media(self) -> typing.List[Media]:
         """
         Retrieves all social media accounts of a team registered on TBA.

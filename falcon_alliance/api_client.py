@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import itertools
 import os
 import typing
@@ -65,6 +66,7 @@ class ApiClient:
     def _caching_headers(func: typing.Callable) -> typing.Callable:
         """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
 
+        @functools.wraps(func)
         def wrapper(
             self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs
         ) -> typing.Any:
