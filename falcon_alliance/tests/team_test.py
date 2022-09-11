@@ -333,3 +333,23 @@ def test_team_max_oprs():
     with ApiClient():
         maximum_opr, event_with_opr = Team(4099).max(2022, metric=Metrics.OPR)
         assert isinstance(maximum_opr, float) and isinstance(event_with_opr, Event)
+
+
+def test_team_caching_headers():
+    """Tests `Team.events` for testing out the caching headers for the rest of the methods."""
+    with pytest.raises(NotModifiedSinceError):
+        with ApiClient():
+            team4099 = Team(4099)
+            for _ in range(2):
+                team4099.events(year=2022, use_caching=True)
+
+
+def test_team_caching_headers_silent():
+    """Tests `Team.events` for testing out the silent versionof the caching headers for the rest of the methods."""
+    with ApiClient():
+        team4099 = Team(4099)
+
+        team4099.events(year=2022, use_caching=True, silent=True)
+        all_events = team4099.events(year=2022, use_caching=True, silent=True)
+
+        assert all_events == []

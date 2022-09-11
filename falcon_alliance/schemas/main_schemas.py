@@ -25,6 +25,8 @@ __all__ = ["District", "Event", "Team"]
 PARSING_FORMAT = "%Y-%m-%d"
 
 
+# Copied over from api_client.py because autocomplete doesn't work
+# when the decorator is in another file from the functions it decorates.
 def _caching_headers(func: typing.Callable) -> typing.Callable:
     """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
 
@@ -35,8 +37,7 @@ def _caching_headers(func: typing.Callable) -> typing.Callable:
         self.use_caching = use_caching
         self.silent = silent
 
-        if etag:
-            self.etag = etag
+        self.etag = etag or self.etag
 
         try:
             return func(self, *args, **kwargs)
@@ -48,7 +49,7 @@ def _caching_headers(func: typing.Callable) -> typing.Callable:
 
                 if "list" in return_type:
                     return []
-                elif "dict" in return_type:
+                elif "dict" in return_type:  # pragma: no cover
                     return {}
 
     return wrapper
