@@ -65,7 +65,9 @@ class ApiClient:
     def _caching_headers(func: typing.Callable) -> typing.Callable:
         """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
 
-        def wrapper(self, *args, use_caching: bool = False, etag: str = "", **kwargs) -> typing.Any:
+        def wrapper(
+            self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs
+        ) -> typing.Any:
             """Wrapper for adding headers to cache the results from the TBA API."""
 
             if use_caching and etag:
@@ -79,7 +81,8 @@ class ApiClient:
             try:
                 return func(self, *args, **kwargs)
             except aiohttp.ContentTypeError:
-                raise NotModifiedSinceError from None
+                if not silent:
+                    raise NotModifiedSinceError from None
 
         return wrapper
 
