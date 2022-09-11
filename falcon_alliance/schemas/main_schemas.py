@@ -86,6 +86,7 @@ class District(BaseSchema):
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url("district", key=self.key, endpoint="events", simple=simple, keys=keys),
                 headers=self._headers,
             )
@@ -114,6 +115,7 @@ class District(BaseSchema):
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url("district", key=self.key, endpoint="teams", simple=simple, keys=keys),
                 headers=self._headers,
             )
@@ -131,7 +133,11 @@ class District(BaseSchema):
             typing.List[falcon_alliance.District.Ranking]: A list of Ranking objects with each Ranking object representing a team's district ranking for the given district.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("district", key=self.key, endpoint="rankings"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("district", key=self.key, endpoint="rankings"),
+                headers=self._headers,
+            )
         )
         return [self.Ranking(**team_ranking_data) for team_ranking_data in response]
 
@@ -390,7 +396,11 @@ class Event(BaseSchema):
             typing.List[falcon_alliance.Event.Alliance]: A list of Alliance objects representing each alliance in the event.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="alliances"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="alliances"),
+                headers=self._headers,
+            )
         )
         return [self.Alliance(**alliance_info) for alliance_info in response]
 
@@ -401,7 +411,11 @@ class Event(BaseSchema):
             typing.List[falcon_alliance.Award]: A list of Award objects representing each award distributed in an event.
         """
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="awards"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="awards"),
+                headers=self._headers,
+            )
         )
         return [Award(**award_info) for award_info in response]
 
@@ -413,7 +427,9 @@ class Event(BaseSchema):
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(
-                url=construct_url("event", key=self.key, endpoint="district_points"), headers=self._headers
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="district_points"),
+                headers=self._headers,
             )
         )
 
@@ -428,7 +444,11 @@ class Event(BaseSchema):
             typing.Optional[falcon_alliance.Event.Insights]: An Insight object containing qualification and playoff insights from the event. Can be None if the event hasn't occurred yet, and the fields of Insight may be None depending on how far the event has advanced.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="insights"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="insights"),
+                headers=self._headers,
+            )
         )
 
         if response:
@@ -457,6 +477,7 @@ class Event(BaseSchema):
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url(
                     "event", key=self.key, endpoint="matches", simple=simple, keys=keys, timeseries=timeseries
                 ),
@@ -476,7 +497,9 @@ class Event(BaseSchema):
             falcon_alliance.Event.OPRs: An OPRs object containing a key/value pair for the OPRs, DPRs, and CCWMs of all teams at an event. The fields of `OPRs` may be empty if OPRs, DPRs, and CCWMs weren't calculated.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="oprs"), headers=self._headers)
+            InternalData.get(
+                current_instance=self, url=construct_url("event", key=self.key, endpoint="oprs"), headers=self._headers
+            )
         )
 
         if response:
@@ -491,7 +514,11 @@ class Event(BaseSchema):
             dict: A dictionary containing the predictions of an event from TBA (contains year-specific information). May be an empty dictionary if there are no predictions available for that event.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="predictions"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="predictions"),
+                headers=self._headers,
+            )
         )
         return response
 
@@ -502,7 +529,11 @@ class Event(BaseSchema):
             typing.Dict[str, falcon_alliance.Event.Ranking]: A dictionary with team keys as the keys of the dictionary and Ranking objects for that team's information about their ranking at an event as values of the dictionary.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=self.key, endpoint="rankings"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("event", key=self.key, endpoint="rankings"),
+                headers=self._headers,
+            )
         )
         rankings_dict = {}
 
@@ -536,6 +567,7 @@ class Event(BaseSchema):
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url("event", key=self.key, endpoint="teams", simple=simple, keys=keys, statuses=statuses),
                 headers=self._headers,
             )
@@ -629,6 +661,7 @@ class Team(BaseSchema):
             typing.Union[typing.List[typing.Union[str, falcon_alliance.Event]], typing.Dict[str, falcon_alliance.EventTeamStatus]]: A list of Event objects for each event that was returned or a list of strings representing the keys of the events or a dictionary with team keys as the keys of the dictionary and an EventTeamStatus object representing the status of said team as the values of the dictionary.
         """  # noqa
         response = await InternalData.get(
+            current_instance=self,
             url=construct_url(
                 "team", key=self.key, endpoint="events", year=year, simple=simple, keys=keys, statuses=statuses
             ),
@@ -661,6 +694,7 @@ class Team(BaseSchema):
             typing.List[falcon_alliance.Match]: A list of Match objects representing each match a team played based on the conditions; might be empty if team didn't play matches that year.
         """  # noqa
         response = await InternalData.get(
+            current_instance=self,
             url=construct_url("team", key=self.key, endpoint="matches", year=year, simple=simple, keys=keys),
             headers=self._headers,
         )
@@ -693,7 +727,7 @@ class Team(BaseSchema):
         else:
             url = construct_url("team", key=self.key, endpoint="media", year=year)
 
-        response = await InternalData.get(url=url, headers=self._headers)
+        response = await InternalData.get(current_instance=self, url=url, headers=self._headers)
         return [Media(**media_data) for media_data in response]
 
     def awards(self, year: typing.Optional[typing.Union[range, int]] = None) -> typing.List[Award]:
@@ -708,6 +742,7 @@ class Team(BaseSchema):
         """  # noqa
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url(
                     "team", key=self.key, endpoint="awards", year=year if isinstance(year, int) else False
                 ),
@@ -723,7 +758,9 @@ class Team(BaseSchema):
         """Returns all the years this team has participated in."""
         response = InternalData.loop.run_until_complete(
             InternalData.get(
-                url=construct_url("team", key=self.key, endpoint="years_participated"), headers=self._headers
+                current_instance=self,
+                url=construct_url("team", key=self.key, endpoint="years_participated"),
+                headers=self._headers,
             )
         )
         return response
@@ -738,7 +775,11 @@ class Team(BaseSchema):
             typing.List[falcon_alliance.District]: A list of districts representing each year this team was in said district if a team has participated in a district, otherwise returns an empty list.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("team", key=self.key, endpoint="districts"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("team", key=self.key, endpoint="districts"),
+                headers=self._headers,
+            )
         )
         return [District(**district_data) for district_data in response]
 
@@ -809,7 +850,9 @@ class Team(BaseSchema):
             typing.List[falcon_alliance.Robot]: A list of robots representing each year a team has registered its robot onto TBA, if a team hasn't named a robot before it returns an empty list.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("team", key=self.key, endpoint="robots"), headers=self._headers)
+            InternalData.get(
+                current_instance=self, url=construct_url("team", key=self.key, endpoint="robots"), headers=self._headers
+            )
         )
         return [Robot(**robot_data) for robot_data in response]
 
@@ -898,6 +941,7 @@ class Team(BaseSchema):
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url(
                     "team",
                     key=self.key,
@@ -929,7 +973,11 @@ class Team(BaseSchema):
             typing.List[falcon_alliance.Media]: A list of Media objects representing each social media account of a team. May be empty if a team has no social media accounts.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("team", key=self.key, endpoint="social_media"), headers=self._headers)
+            InternalData.get(
+                current_instance=self,
+                url=construct_url("team", key=self.key, endpoint="social_media"),
+                headers=self._headers,
+            )
         )
         return [Media(**social_media_info) for social_media_info in response]
 
