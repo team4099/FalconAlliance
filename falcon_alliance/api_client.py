@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import itertools
 import os
 import typing
@@ -77,7 +76,10 @@ class ApiClient:
             if not self.use_caching:
                 self.etag = etag
 
-            return func(self, *args, **kwargs)
+            try:
+                return func(self, *args, **kwargs)
+            except aiohttp.ContentTypeError:
+                raise NotModifiedSinceError from None
 
         return wrapper
 
