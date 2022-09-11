@@ -26,9 +26,6 @@ class InternalData:
         Returns:
             An aiohttp.ClientResponse object representing the response the GET request returned.
         """
-        if cls.session is None:
-            cache = CacheBackend(cache_control=True)
-            cls.session = CachedSession(cache=cache)
 
         async with cls.session.get(url=url, headers=headers) as response:
             response_json = await response.json()
