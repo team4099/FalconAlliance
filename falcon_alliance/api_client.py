@@ -47,7 +47,7 @@ class ApiClient:
                 api_key = os.environ["API_KEY"]
 
         self._headers = {"X-TBA-Auth-Key": api_key}
-        self.etag = None
+        self.etag = ""
         BaseSchema.add_headers(self._headers)
         InternalData.loop.run_until_complete(InternalData.set_session())
 
@@ -70,12 +70,10 @@ class ApiClient:
         ) -> typing.Any:
             """Wrapper for adding headers to cache the results from the TBA API."""
 
-            if use_caching and etag:
-                raise ValueError("`use_caching` cannot be True if `etag` is passed in.")
-
             self.use_caching = use_caching
+            self.silent = silent
 
-            if not self.use_caching:
+            if etag:
                 self.etag = etag
 
             try:
@@ -83,6 +81,13 @@ class ApiClient:
             except aiohttp.ContentTypeError:
                 if not silent:
                     raise NotModifiedSinceError from None
+                else:
+                    return_type = str(func.__annotations__["return"]).lower()
+
+                    if "list" in return_type:
+                        return []
+                    elif "dict" in return_type:
+                        return {}
 
         return wrapper
 
@@ -91,6 +96,7 @@ class ApiClient:
         await InternalData.session.close()
         InternalData.session = None
 
+    @_caching_headers
     async def _get_year_events(
         self, year: int, simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Event, str]]:
@@ -106,13 +112,16 @@ class ApiClient:
             typing.List[typing.Union[falcon_alliance.Event, str]]: A list of Event objects representing each event in a year or a list of strings representing all the keys of the events retrieved.
         """  # noqa
         response = await InternalData.get(
-            url=construct_url("events", year=year, simple=simple, keys=keys), headers=self._headers
+            current_instance=self,
+            url=construct_url("events", year=year, simple=simple, keys=keys),
+            headers=self._headers,
         )
         if keys:
             return response
         else:
             return [Event(**event_data) for event_data in response]
 
+    @_caching_headers
     async def _get_team_page(
         self,
         page_num: typing.Optional[int] = None,
@@ -134,6 +143,7 @@ class ApiClient:
         """  # noqa
         if page_num is not None:
             response = await InternalData.get(
+                current_instance=self,
                 url=construct_url("teams", year=year, page_num=page_num, simple=simple, keys=keys),
                 headers=self._headers,
             )
@@ -141,7 +151,20 @@ class ApiClient:
         else:
             return list(
                 itertools.chain.from_iterable(
-                    await asyncio.gather(*[self._get_team_page(spec_num, year, simple, keys) for spec_num in range(20)])
+                    await asyncio.gather(
+                        *[
+                            self._get_team_page(
+                                spec_num,
+                                year,
+                                simple,
+                                keys,
+                                use_caching=self.use_caching,
+                                etag=self.etag,
+                                silent=self.silent,
+                            )
+                            for spec_num in range(20)
+                        ]
+                    )
                 )
             )
 
@@ -161,6 +184,7 @@ class ApiClient:
         )
         return [District(**district_data) for district_data in response]
 
+    @_caching_headers
     def event(self, event_key: str, simple: bool = False) -> Event:
         """
         Retrieves and returns a record of teams based on the parameters given.
@@ -173,10 +197,13 @@ class ApiClient:
             falcon_alliance.Event: An Event object representing the data given.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("event", key=event_key, simple=simple), headers=self._headers)
+            InternalData.get(
+                current_instance=self, url=construct_url("event", key=event_key, simple=simple), headers=self._headers
+            )
         )
         return Event(**response)
 
+    @_caching_headers
     def events(
         self, year: typing.Union[range, int], simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Event, str]]:
@@ -198,13 +225,30 @@ class ApiClient:
             return list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self._get_year_events(spec_year, simple, keys) for spec_year in year])
+                        asyncio.gather(
+                            *[
+                                self._get_year_events(
+                                    spec_year,
+                                    simple,
+                                    keys,
+                                    use_caching=self.use_caching,
+                                    etag=self.etag,
+                                    silent=self.silent,
+                                )
+                                for spec_year in year
+                            ]
+                        )
                     )
                 )
             )
         else:
-            return InternalData.loop.run_until_complete(self._get_year_events(year, simple, keys))
+            return InternalData.loop.run_until_complete(
+                self._get_year_events(
+                    year, simple, keys, use_caching=self.use_caching, etag=self.etag, silent=self.silent
+                )
+            )
 
+    @_caching_headers
     def match(
         self, match_key: str, simple: bool = False, timeseries: bool = False, zebra_motionworks: bool = False
     ) -> typing.Optional[typing.Union[typing.List[dict], Match, Match.ZebraMotionworks]]:
@@ -230,6 +274,7 @@ class ApiClient:
 
         response = InternalData.loop.run_until_complete(
             InternalData.get(
+                current_instance=self,
                 url=construct_url(
                     "match", key=match_key, simple=simple, timeseries=timeseries, zebra_motionworks=zebra_motionworks
                 ),
@@ -246,6 +291,7 @@ class ApiClient:
         else:
             return Match(**response)
 
+    @_caching_headers
     def status(self) -> APIStatus:
         """
         Retrieves information about TBA's API status.
@@ -254,10 +300,11 @@ class ApiClient:
             falcon_alliance.APIStatus: An APIStatus object containing information about TBA's API status.
         """
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("status").rstrip("/"), headers=self._headers)
+            InternalData.get(current_instance=self, url=construct_url("status").rstrip("/"), headers=self._headers)
         )
         return APIStatus(**response)
 
+    @_caching_headers
     def team(self, team_key: typing.Union[int, str], simple: bool = False) -> Team:
         """
         Retrieves and returns a record of teams based on the parameters given.
@@ -270,10 +317,13 @@ class ApiClient:
             falcon_alliance.Team: A Team object representing the data given.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("team", key=team_key, simple=simple), headers=self._headers)
+            InternalData.get(
+                current_instance=self, url=construct_url("team", key=team_key, simple=simple), headers=self._headers
+            )
         )
         return Team(**response)
 
+    @_caching_headers
     def teams(
         self, page_num: int = None, year: typing.Union[range, int] = None, simple: bool = False, keys: bool = False
     ) -> typing.List[typing.Union[Team, str]]:
@@ -296,7 +346,20 @@ class ApiClient:
             all_responses = list(
                 itertools.chain.from_iterable(
                     InternalData.loop.run_until_complete(
-                        asyncio.gather(*[self._get_team_page(page_num, spec_year, simple, keys) for spec_year in year])
+                        asyncio.gather(
+                            *[
+                                self._get_team_page(
+                                    page_num,
+                                    spec_year,
+                                    simple,
+                                    keys,
+                                    use_caching=self.use_caching,
+                                    etag=self.etag,
+                                    silent=self.silent,
+                                )
+                                for spec_year in year
+                            ]
+                        )
                     )
                 )
             )
@@ -304,4 +367,8 @@ class ApiClient:
             return sorted(list(set(all_responses)))
 
         else:
-            return InternalData.loop.run_until_complete(self._get_team_page(page_num, year, simple, keys))
+            return InternalData.loop.run_until_complete(
+                self._get_team_page(
+                    page_num, year, simple, keys, use_caching=self.use_caching, etag=self.etag, silent=self.silent
+                )
+            )
