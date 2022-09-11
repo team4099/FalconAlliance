@@ -48,6 +48,7 @@ class ApiClient:
                 api_key = os.environ["API_KEY"]
 
         self._headers = {"X-TBA-Auth-Key": api_key}
+        self.etag = None
         BaseSchema.add_headers(self._headers)
         InternalData.loop.run_until_complete(InternalData.set_session())
 
@@ -67,10 +68,16 @@ class ApiClient:
 
         def wrapper(self, *args, use_caching: bool = False, etag: str = "", **kwargs) -> typing.Any:
             """Wrapper for adding headers to cache the results from the TBA API."""
-            self._use_caching = use_caching
-            self._etag = etag
 
-            return func(*args, **kwargs)
+            if use_caching and etag:
+                raise ValueError("`use_caching` cannot be True if `etag` is passed in.")
+
+            self.use_caching = use_caching
+
+            if not self.use_caching:
+                self.etag = etag
+
+            return func(self, *args, **kwargs)
 
         return wrapper
 
@@ -133,6 +140,7 @@ class ApiClient:
                 )
             )
 
+    @_caching_headers
     def districts(self, year: int) -> typing.List[District]:
         """
         Retrieves all FRC districts during a year.
@@ -144,7 +152,7 @@ class ApiClient:
             typing.List[falcon_alliance.District]: A list of District objects with each object representing an active district of that year.
         """  # noqa
         response = InternalData.loop.run_until_complete(
-            InternalData.get(url=construct_url("districts", year=year), headers=self._headers)
+            InternalData.get(current_instance=self, url=construct_url("districts", year=year), headers=self._headers)
         )
         return [District(**district_data) for district_data in response]
 

@@ -96,8 +96,11 @@ def test_team_matches():
 
 def test_team_matches_range():
     """Tests `Team.matches` to pass in a range object for the `year` parameter to retrieve matches a team played over multiple years."""
-    team4099_matches = Team(4099).matches(range(2020, 2023))
-    assert isinstance(team4099_matches, list) and all(isinstance(game_match, Match) for game_match in team4099_matches)
+    with ApiClient():
+        team4099_matches = Team(4099).matches(range(2020, 2023))
+        assert isinstance(team4099_matches, list) and all(
+            isinstance(game_match, Match) for game_match in team4099_matches
+        )
 
 
 def test_team_matches_event_code():
