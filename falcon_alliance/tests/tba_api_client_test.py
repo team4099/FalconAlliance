@@ -191,3 +191,20 @@ def test_teams_extra_parameters():
     with pytest.raises(ValueError):
         with ApiClient() as api_client:
             api_client.teams(page_num=1, year=2022, simple=True, keys=True)
+
+
+def test_caching_headers():
+    """Tests the caching headers for the rest of the methods in `ApiClient`."""
+    with pytest.raises(NotModifiedSinceError):
+        with ApiClient() as api_client:
+            for _ in range(2):
+                api_client.events(year=2022, use_caching=True)
+
+
+def test_team_caching_headers_silent():
+    """Tests the silent version of the caching headers for the rest of the methods in `ApiClient."""
+    with ApiClient() as api_client:
+        api_client.events(year=2022, use_caching=True, silent=True)
+        all_events = api_client.events(year=2022, use_caching=True, silent=True)
+
+        assert all_events == []

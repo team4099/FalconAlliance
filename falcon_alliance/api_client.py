@@ -88,7 +88,7 @@ class ApiClient:
 
                     if "list" in return_type:
                         return []
-                    elif "dict" in return_type:
+                    elif "dict" in return_type:  # pragma: no cover
                         return {}
 
         return wrapper

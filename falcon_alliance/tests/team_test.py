@@ -335,8 +335,8 @@ def test_team_max_oprs():
         assert isinstance(maximum_opr, float) and isinstance(event_with_opr, Event)
 
 
-def test_team_caching_headers():
-    """Tests `Team.events` for testing out the caching headers for the rest of the methods."""
+def test_caching_headers():
+    """Tests the caching headers for the rest of the methods."""
     with pytest.raises(NotModifiedSinceError):
         with ApiClient():
             team4099 = Team(4099)
@@ -345,7 +345,7 @@ def test_team_caching_headers():
 
 
 def test_team_caching_headers_silent():
-    """Tests `Team.events` for testing out the silent versionof the caching headers for the rest of the methods."""
+    """Tests the silent version of the caching headers for the rest of the methods."""
     with ApiClient():
         team4099 = Team(4099)
 
