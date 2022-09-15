@@ -13,7 +13,10 @@ Prerequisites
 Building Block of FalconAlliance Code
 -------------------------------------
 
-When accessing data from TBA (The Blue Alliance)'s API, all code regardless of whether or not you request to one of the base endpoints must include the following code to start off with:
+When accessing data from TBA (The Blue Alliance)'s API, all code regardless of whether or not you request to one of the base endpoints must include either of the following code to start off with:
+
+Utilizing Context Managers
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -34,6 +37,21 @@ The purpose of the ``with`` block here is to close the client session used for s
    If you haven't seen this syntax before, ``with`` blocks are known as context managers and are used to manage resources in some way. You may have seen these blocks in the context of opening and closing files, and they're generally used to ensure that resources are closed or managed with once the block of code is finished running.
 
    For more information about context managers, check out `this article <https://realpython.com › python-wit...Context Managers and Python's with Statement>`_.
+
+Alternatives to Context Managers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you're looking for an easy migration of your old code and don't want to use context managers, you can also do the following:
+
+.. code-block:: python
+
+   import falcon_alliance
+
+   try:
+       api_client = falcon_alliance.ApiClient(api_key=YOUR_API_KEY)
+       # Your code goes here
+   finally:
+       api_client.close()
 
 .. _installation:
 
