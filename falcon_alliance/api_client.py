@@ -61,7 +61,7 @@ class ApiClient:
         exc_val: typing.Optional[BaseException],
         exc_tb: typing.Optional[TracebackType],
     ) -> None:
-        InternalData.loop.run_until_complete(self.close())
+        self.close()
 
     def _caching_headers(func: typing.Callable) -> typing.Callable:
         """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
@@ -93,8 +93,12 @@ class ApiClient:
 
         return wrapper
 
-    async def close(self) -> None:
+    def close(self) -> None:
         """Closes the ongoing session (`aiohttp.ClientSession`)."""
+        InternalData.loop.run_until_complete(self._close())
+
+    async def _close(self) -> None:
+        """Asynchronous helper function for closing the ongoing session (`aiohttp.ClientSession`)."""
         await InternalData.session.close()
         InternalData.session = None
 
