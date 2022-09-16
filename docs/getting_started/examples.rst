@@ -37,10 +37,16 @@ Finding the Maximum Score from all the Matches a Team Played During a Year
 
 .. code-block:: python
 
-   import FalconAlliance.falcon_alliance as falcon_alliance
+   import falcon_alliance
 
    with falcon_alliance.ApiClient() as api_client:
        team4099 = falcon_alliance.Team(4099)
+
+       # Suggested way
+       match_with_max_score = team4099.max(2022, metric=falcon_alliance.Metrics.MATCH_SCORE)
+       maximum_score = match_with_max_score.alliance_of(team4099).score
+
+       # Alternative way
        match_scores = []
 
        for match in team4099.matches(year=2022):
