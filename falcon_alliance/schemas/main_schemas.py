@@ -543,7 +543,7 @@ class Event(BaseSchema):
         """  # noqa
         if (simple, keys, timeseries).count(True) > 1:
             raise ValueError(
-                "Only one parameter out of `simple`, `keys`, and `statuses`"
+                "Only one parameter out of `simple`, `keys`, and `timeseries`"
                 " can be True. You can't mix and match parameters."
             )
 
