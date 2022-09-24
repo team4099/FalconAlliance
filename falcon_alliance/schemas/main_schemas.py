@@ -25,36 +25,6 @@ __all__ = ["District", "Event", "Team"]
 PARSING_FORMAT = "%Y-%m-%d"
 
 
-# Copied over from api_client.py because autocomplete doesn't work
-# when the decorator is in another file from the functions it decorates.
-def _caching_headers(func: typing.Callable) -> typing.Callable:
-    """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
-
-    @functools.wraps(func)
-    def wrapper(self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs) -> typing.Any:
-        """Wrapper for adding headers to cache the results from the TBA API."""
-
-        self.use_caching = use_caching
-        self.silent = silent
-
-        self.etag = etag or self.etag
-
-        try:
-            return func(self, *args, **kwargs)
-        except aiohttp.ContentTypeError:
-            if not silent:
-                raise NotModifiedSinceError from None
-            else:
-                return_type = str(func.__annotations__["return"]).lower()
-
-                if "list" in return_type:
-                    return []
-                elif "dict" in return_type:  # pragma: no cover
-                    return {}
-
-    return wrapper
-
-
 class District(BaseSchema):
     """Class representing a district containing methods to get specific district information.
 
@@ -64,6 +34,37 @@ class District(BaseSchema):
         abbreviation (str): The short identifier for the district.
         display_name (str, optional): The long name for the district.
     """
+
+    # Copied over from api_client.py because autocomplete doesn't work
+    # when the decorator is in another file from the functions it decorates.
+    def _caching_headers(func: typing.Callable) -> typing.Callable:
+        """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
+
+        @functools.wraps(func)
+        def wrapper(
+            self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs
+        ) -> typing.Any:
+            """Wrapper for adding headers to cache the results from the TBA API."""
+
+            self.use_caching = use_caching
+            self.silent = silent
+
+            self.etag = etag or self.etag
+
+            try:
+                return func(self, *args, **kwargs)
+            except aiohttp.ContentTypeError:
+                if not silent:
+                    raise NotModifiedSinceError from None
+                else:
+                    return_type = str(func.__annotations__["return"]).lower()
+
+                    if "list" in return_type:
+                        return []
+                    elif "dict" in return_type:  # pragma: no cover
+                        return {}
+
+        return wrapper
 
     @dataclass()
     class Ranking:
@@ -212,6 +213,37 @@ class Event(BaseSchema):
         playoff_type (int, optional): Playoff Type, as defined here: https://github.com/the-blue-alliance/the-blue-alliance/blob/master/consts/playoff_type.py#L4, or None.
         playoff_type_string (str, optional): String representation of the playoff_type, or None.
     """  # noqa
+
+    # Copied over from other classes in main_schemas.py as autocomplete fails to work
+    # when the decorator is defined in another class.
+    def _caching_headers(func: typing.Callable) -> typing.Callable:
+        """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
+
+        @functools.wraps(func)
+        def wrapper(
+            self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs
+        ) -> typing.Any:
+            """Wrapper for adding headers to cache the results from the TBA API."""
+
+            self.use_caching = use_caching
+            self.silent = silent
+
+            self.etag = etag or self.etag
+
+            try:
+                return func(self, *args, **kwargs)
+            except aiohttp.ContentTypeError:
+                if not silent:
+                    raise NotModifiedSinceError from None
+                else:
+                    return_type = str(func.__annotations__["return"]).lower()
+
+                    if "list" in return_type:
+                        return []
+                    elif "dict" in return_type:  # pragma: no cover
+                        return {}
+
+        return wrapper
 
     @dataclass()
     class DistrictPoints:
@@ -688,6 +720,37 @@ class Team(BaseSchema):
         self.home_championship: typing.Optional[dict] = kwargs.get("home_championship")
 
         super().__init__()
+
+    # Copied over from other classes in main_schemas.py as autocomplete fails to work
+    # when the decorator is defined in another class.
+    def _caching_headers(func: typing.Callable) -> typing.Callable:
+        """Decorator for utilizing the `Etag` and `If-None-Match` caching headers for the TBA API."""
+
+        @functools.wraps(func)
+        def wrapper(
+            self, *args, use_caching: bool = False, etag: str = "", silent: bool = False, **kwargs
+        ) -> typing.Any:
+            """Wrapper for adding headers to cache the results from the TBA API."""
+
+            self.use_caching = use_caching
+            self.silent = silent
+
+            self.etag = etag or self.etag
+
+            try:
+                return func(self, *args, **kwargs)
+            except aiohttp.ContentTypeError:
+                if not silent:
+                    raise NotModifiedSinceError from None
+                else:
+                    return_type = str(func.__annotations__["return"]).lower()
+
+                    if "list" in return_type:
+                        return []
+                    elif "dict" in return_type:  # pragma: no cover
+                        return {}
+
+        return wrapper
 
     @_caching_headers
     async def _get_year_events(
