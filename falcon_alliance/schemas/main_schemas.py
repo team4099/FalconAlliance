@@ -1223,8 +1223,11 @@ class Team(BaseSchema):
             typing.Optional[typing.Tuple[float, float]]: Returns a tuple containing the latitude and longitude or None if it couldn't find a location for the team.
         """  # noqa
         if self.city or self.state_prov or self.country:
-            to_search = ", ".join([value for value in (self.city, self.state_prov, self.country) if value])
-            print(to_search)
+            if self.country in {"USA", "Canada"}:
+                to_search = ", ".join([value for value in (self.city, self.state_prov, self.country) if value])
+            else:
+                to_search = ", ".join([value for value in (self.city, self.country) if value])
+
             geolocation = InternalData.loop.run_until_complete(
                 InternalData.get(
                     current_instance=self,
