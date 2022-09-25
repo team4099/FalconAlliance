@@ -1222,22 +1222,13 @@ class Team(BaseSchema):
         Returns:
             typing.Optional[typing.Tuple[float, float]]: Returns a tuple containing the latitude and longitude or None if it couldn't find a location for the team.
         """  # noqa
-        if self.city is None and (self.postal_code and self.country):
+        if self.city or self.state_prov or self.country:
+            to_search = ", ".join([value for value in (self.city, self.state_prov, self.country) if value])
+            print(to_search)
             geolocation = InternalData.loop.run_until_complete(
                 InternalData.get(
                     current_instance=self,
-                    url=f"https://nominatim.openstreetmap.org/search/{self.postal_code}, {self.country}?format=json",
-                    headers=self._headers,
-                )
-            )
-        elif self.city:
-            geolocation = InternalData.loop.run_until_complete(
-                InternalData.get(
-                    current_instance=self,
-                    url=(
-                        "https://nominatim.openstreetmap.org/search/"
-                        f"{self.city}, {self.postal_code}, {self.country}?format=json"
-                    ),
+                    url=f"https://nominatim.openstreetmap.org/search/{to_search}?format=json",
                     headers=self._headers,
                 )
             )
