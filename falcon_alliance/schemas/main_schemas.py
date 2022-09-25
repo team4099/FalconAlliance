@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import functools
 import itertools
+import statistics
 import typing
 from dataclasses import dataclass
 from re import match
@@ -1192,6 +1193,21 @@ class Team(BaseSchema):
                     team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
 
             return max(team_oprs, key=lambda tup: tup[0])
+
+    def average(self, year: typing.Union[range, int], metric: Metrics) -> float:
+        """
+        Retrieves the average of a certain metric based on the year.
+
+        Args:
+            year (range, int): An integer representing the year to apply the metric to or a range object representing the years to apply the metric to.
+            metric (Metrics): An Enum object representing which metric to use to find the average of something relating to a team of your desire.
+
+        Returns:
+            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric` or a float representing the average climb of a team if Metrics.CLIMB is passed into `metric`.
+        """  # noqa
+        if metric == Metrics.MATCH_SCORE:
+            team_matches = self.matches(year)
+            return statistics.mean([match.alliance_of(self).score for match in team_matches])
 
     def location(self) -> typing.Optional[typing.Tuple[float, float]]:
         """
