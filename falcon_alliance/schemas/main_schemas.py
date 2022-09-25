@@ -1168,6 +1168,8 @@ class Team(BaseSchema):
                     team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
 
             return min(team_oprs, key=lambda tup: tup[0])
+        else:
+            raise ValueError(f"{metric} incompatible with `Team.min`.")
 
     def max(self, year: typing.Union[range, int], metric: Metrics) -> typing.Union[Match, typing.Tuple[float, Event]]:
         """
@@ -1193,6 +1195,8 @@ class Team(BaseSchema):
                     team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
 
             return max(team_oprs, key=lambda tup: tup[0])
+        else:
+            raise ValueError(f"{metric} incompatible with `Team.max`.")
 
     def average(self, year: typing.Union[range, int], metric: Metrics) -> float:
         """
@@ -1203,11 +1207,13 @@ class Team(BaseSchema):
             metric (Metrics): An Enum object representing which metric to use to find the average of something relating to a team of your desire.
 
         Returns:
-            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric` or a float representing the average climb of a team if Metrics.CLIMB is passed into `metric`.
+            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric`.
         """  # noqa
         if metric == Metrics.MATCH_SCORE:
             team_matches = self.matches(year)
             return statistics.mean([match.alliance_of(self).score for match in team_matches])
+        else:
+            raise ValueError(f"{metric} incompatible with `Team.average`.")
 
     def location(self) -> typing.Optional[typing.Tuple[float, float]]:
         """

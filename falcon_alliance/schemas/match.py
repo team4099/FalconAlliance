@@ -33,6 +33,7 @@ class Match(BaseSchema):
     class Alliance:
         """Class representing an alliance's performance/metadata during a match."""
 
+        color: typing.Union[typing.Literal["blue"], typing.Literal["red"]]
         score: typing.Optional[int]
         team_keys: typing.List[str]
         surrogate_team_keys: typing.List[str]
@@ -70,8 +71,8 @@ class Match(BaseSchema):
 
         alliances = kwargs.get("alliances")
         self.alliances: typing.Optional[dict] = {
-            "red": self.Alliance(**alliances["red"]),
-            "blue": self.Alliance(**alliances["blue"]),
+            "red": self.Alliance(**alliances["red"], color="red"),
+            "blue": self.Alliance(**alliances["blue"], color="blue"),
         }
         self.winning_alliance: typing.Optional[str] = kwargs.get("winning_alliance")
 
