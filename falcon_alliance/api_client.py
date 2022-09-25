@@ -322,6 +322,8 @@ class ApiClient:
         Returns:
             falcon_alliance.Team: A Team object representing the data given.
         """  # noqa
+        team_key = to_team_key(team_key)
+
         response = InternalData.loop.run_until_complete(
             InternalData.get(
                 current_instance=self, url=construct_url("team", key=team_key, simple=simple), headers=self._headers

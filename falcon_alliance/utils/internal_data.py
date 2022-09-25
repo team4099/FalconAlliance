@@ -13,7 +13,9 @@ class InternalData:
     session = None
 
     @classmethod
-    async def get(cls, *, current_instance: typing.Any, url: str, headers: dict) -> typing.Union[list, dict]:
+    async def get(
+        cls, *, current_instance: typing.Any, url: str, headers: dict, ssl: bool = True
+    ) -> typing.Union[list, dict]:
         """
         Sends a GET request to the TBA API.
 
@@ -21,6 +23,7 @@ class InternalData:
             current_instance (typing.Any): The instance where the get method is being called from.
             url (str): A string representing which URL to send a GET request to.
             headers (dict): A dictionary containing the API key to authorize the request.
+            ssl (bool): A boolean representing whether or not to verify the SSL certificate.
 
         Returns:
             An aiohttp.ClientResponse object representing the response the GET request returned.
@@ -29,11 +32,14 @@ class InternalData:
         if current_instance.etag:
             headers.update({"If-None-Match": current_instance.etag})
 
-        async with cls.session.get(url=url, headers=headers) as response:
+        async with cls.session.get(url=url, headers=headers, ssl=ssl) as response:
             response_json = await response.json()
 
-            if current_instance.use_caching:
-                current_instance.etag = response.headers["ETag"]
+            try:
+                if current_instance.use_caching:
+                    current_instance.etag = response.headers["ETag"]
+            except AttributeError:  # when using a method that doesn't require requesting to TBA API.
+                pass
 
             if isinstance(response_json, dict) and response_json.get("Error"):
                 raise TBAError(response_json["Error"])

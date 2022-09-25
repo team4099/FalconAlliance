@@ -12,7 +12,7 @@ class BaseSchema:
         for attr_name, attr_value in self._as_dictionary.items():
             if attr_value is None or attr_name.startswith("_"):  # pragma: no cover
                 continue
-            elif attr_value == "" and attr_name == "etag":
+            elif isinstance(attr_value, str) and attr_value == "" and attr_name == "etag":
                 continue
 
             if isinstance(attr_value, dict):

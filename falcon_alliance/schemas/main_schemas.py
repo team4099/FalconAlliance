@@ -1193,6 +1193,40 @@ class Team(BaseSchema):
 
             return max(team_oprs, key=lambda tup: tup[0])
 
+    def location(self) -> typing.Optional[typing.Tuple[float, float]]:
+        """
+        Retrieves the location of the team based on its postal code.
+
+        Returns:
+            typing.Optional[typing.Tuple[float, float]]: Returns a tuple containing the latitude and longitude or None if it couldn't find a location for the team.
+        """  # noqa
+        if self.city is None and (self.postal_code and self.country):
+            geolocation = InternalData.loop.run_until_complete(
+                InternalData.get(
+                    current_instance=self,
+                    url=f"https://nominatim.openstreetmap.org/search/{self.postal_code}, {self.country}?format=json",
+                    headers=self._headers,
+                )
+            )
+        elif self.city:
+            geolocation = InternalData.loop.run_until_complete(
+                InternalData.get(
+                    current_instance=self,
+                    url=(
+                        "https://nominatim.openstreetmap.org/search/"
+                        f"{self.city}, {self.postal_code}, {self.country}?format=json"
+                    ),
+                    headers=self._headers,
+                )
+            )
+        else:
+            return
+
+        try:
+            return float(geolocation[0]["lat"]), float(geolocation[0]["lon"])
+        except IndexError:  # when it can't find a location for the team.
+            return
+
     def __hash__(self) -> int:
         return self.team_number
 
