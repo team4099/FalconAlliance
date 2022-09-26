@@ -1248,3 +1248,6 @@ class Team(BaseSchema):
 
     def __lt__(self, other: "Team") -> bool:
         return self.team_number < other.team_number
+
+    def __eq__(self, other: "Team") -> bool:
+        return self.team_number == other.team_number
