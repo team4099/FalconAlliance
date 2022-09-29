@@ -659,13 +659,12 @@ class Event(BaseSchema):
             }
         else:
             return [Team(**team_data) for team_data in response]
-        
-    def min(self, year: typing.Union[range, int], metric: Metrics) -> typing.Union[Match, tuple[float, "Team"]]:
+
+    def min(self, metric: Metrics) -> typing.Union[Match, tuple[float, "Team"]]:
         """
         Retrieves the minimum of a certain metric based on the year.
 
         Args:
-            year (range, int): An integer representing the year to apply the metric to or a range object representing the years to apply the metric to.
             metric (Metrics): An Enum object representing which metric to use to find the minimum of something relating to a team of your desire.
 
         Returns:
