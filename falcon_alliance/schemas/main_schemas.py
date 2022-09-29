@@ -677,6 +677,23 @@ class Event(BaseSchema):
             team_key, opr = min(getattr(self.oprs(), f"{metric._name_.lower()}s").items(), key=lambda tup: tup[1])
             return opr, Team(team_key)
 
+    def max(self, metric: Metrics) -> typing.Union[Match, tuple[float, "Team"]]:
+        """
+        Retrieves the maximum of a certain metric based on the year.
+
+        Args:
+            metric (Metrics): An Enum object representing which metric to use to find the maximum of something relating to a team of your desire.
+
+        Returns:
+            typing.Union[Match, tuple[float, falcon_alliance.Team]]: A Match object representing the match with the maximum cumulative score (red alliance's score + blue alliance's score) if Metrics.MATCH_SCORE is passed into `metric` or a tuple containing the float representing the maximum OPR/DPR/CCWM during an event and a Team object representing the team that had the maximum OPR.
+        """  # noqa
+        if metric == Metrics.MATCH_SCORE:
+            event_matches = self.matches()
+            return max(event_matches, key=lambda match: match.alliances["red"].score + match.alliances["blue"].score)
+        elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
+            team_key, opr = max(getattr(self.oprs(), f"{metric._name_.lower()}s").items(), key=lambda tup: tup[1])
+            return opr, Team(team_key)
+
 
 class Team(BaseSchema):
     """Class representing a team's metadata with methods to get team specific data.
