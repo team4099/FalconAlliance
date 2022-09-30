@@ -694,6 +694,22 @@ class Event(BaseSchema):
             team_key, opr = max(getattr(self.oprs(), f"{metric._name_.lower()}s").items(), key=lambda tup: tup[1])
             return opr, Team(team_key)
 
+    def average(self, metric: Metrics) -> float:
+        """
+        Retrieves the aveage of a certain metric based on the year.
+
+        Args:
+            metric (Metrics): An Enum object representing which metric to use to find the average of something relating to a team of your desire.
+
+        Returns:
+            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric` or a float representing the average OPR/DPR/CCWM.
+        """  # noqa
+        if metric == Metrics.MATCH_SCORE:
+            event_scores = [alliance.score for match in self.matches() for alliance in match.alliances.values()]
+            return statistics.mean(event_scores)
+        elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
+            return statistics.mean(getattr(self.oprs(), f"{metric._name_.lower()}s").values())
+
 
 class Team(BaseSchema):
     """Class representing a team's metadata with methods to get team specific data.
