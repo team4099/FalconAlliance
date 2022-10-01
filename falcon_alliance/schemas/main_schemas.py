@@ -1227,21 +1227,27 @@ class Team(BaseSchema):
         else:
             raise ValueError(f"{metric} incompatible with `Team.min`.")
 
-    def max(self, year: typing.Union[range, int], metric: Metrics) -> typing.Union[Match, typing.Tuple[float, Event]]:
+    def max(
+        self, year: typing.Union[range, int], metric: Metrics, *, event_code: typing.Optional[str]
+    ) -> typing.Union[Match, typing.Tuple[float, Event]]:
         """
         Retrieves the maximum of a certain metric based on the year.
 
         Args:
             year (range, int): An integer representing the year to apply the metric to or a range object representing the years to apply the metric to.
             metric (Metrics): An Enum object representing which metric to use to find the maximum of something relating to a team of your desire.
+            event_code(str, optional): A string representing which event to apply a certain metric to for finding the maximum based on said metric (optional).
 
         Returns:
             typing.Union[Match, tuple[float, falcon_alliance.Event]]: A Match object representing the match with the maximum score if Metrics.MATCH_SCORE is passed into `metric` or a tuple containing the maximum OPR/DPR/CCWM for a team and the event where the team had said maximum OPR/DPR/CCWM if Metrics.OPR, Metrics.DPR or Metrics.CCWM is passed into `metric`.
         """  # noqa
         if metric == Metrics.MATCH_SCORE:
-            team_matches = self.matches(year)
+            team_matches = self.matches(year, event_code) if event_code else self.matches(year)
             return max(team_matches, key=lambda match: match.alliance_of(self.key).score)
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
+            if event_code:
+                raise ValueError(f"`event_code` parameter incompatible with the metric {metric}.")
+
             team_oprs = []
 
             for event in self.events(year):
