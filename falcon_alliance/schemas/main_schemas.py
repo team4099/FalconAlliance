@@ -1228,7 +1228,7 @@ class Team(BaseSchema):
             raise ValueError(f"{metric} incompatible with `Team.min`.")
 
     def max(
-        self, year: typing.Union[range, int], metric: Metrics, *, event_code: typing.Optional[str]
+        self, year: typing.Union[range, int], metric: Metrics, *, event_code: typing.Optional[str] = None
     ) -> typing.Union[Match, typing.Tuple[float, Event]]:
         """
         Retrieves the maximum of a certain metric based on the year.
@@ -1260,7 +1260,9 @@ class Team(BaseSchema):
         else:
             raise ValueError(f"{metric} incompatible with `Team.max`.")
 
-    def average(self, year: typing.Union[range, int], metric: Metrics) -> float:
+    def average(
+        self, year: typing.Union[range, int], metric: Metrics, *, event_code: typing.Optional[str] = None
+    ) -> float:
         """
         Retrieves the average of a certain metric based on the year.
 
@@ -1269,13 +1271,21 @@ class Team(BaseSchema):
             metric (Metrics): An Enum object representing which metric to use to find the average of something relating to a team of your desire.
 
         Returns:
-            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric`.
+            float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric` or a float representing the average OPR/DPR/CCWM of a team for a certain year.
         """  # noqa
         if metric == Metrics.MATCH_SCORE:
             team_matches = self.matches(year)
             return statistics.mean([match.alliance_of(self).score for match in team_matches])
         else:
-            raise ValueError(f"{metric} incompatible with `Team.average`.")
+            team_oprs = []
+
+            for event in self.events(year):
+                event_oprs = event.oprs()
+
+                if getattr(event_oprs, f"{metric.name.lower()}s"):
+                    team_oprs.append(getattr(event_oprs, f"{metric.name.lower()}s")[self.key])
+
+            return statistics.mean(team_oprs)
 
     def location(self) -> typing.Optional[typing.Tuple[float, float]]:
         """
