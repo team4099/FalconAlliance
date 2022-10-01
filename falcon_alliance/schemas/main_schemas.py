@@ -1269,14 +1269,18 @@ class Team(BaseSchema):
         Args:
             year (range, int): An integer representing the year to apply the metric to or a range object representing the years to apply the metric to.
             metric (Metrics): An Enum object representing which metric to use to find the average of something relating to a team of your desire.
+            event_code(str, optional): A string representing which event to apply a certain metric to for finding the maximum based on said metric (optional).
 
         Returns:
             float: A float representing the average match score if Metrics.MATCH_SCORE is passed into `metric` or a float representing the average OPR/DPR/CCWM of a team for a certain year.
         """  # noqa
         if metric == Metrics.MATCH_SCORE:
-            team_matches = self.matches(year)
+            team_matches = self.matches(year, event_code) if event_code else self.matches(year)
             return statistics.mean([match.alliance_of(self).score for match in team_matches])
-        else:
+        elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
+            if event_code:
+                raise ValueError(f"`event_code` parameter incompatible with the metric {metric}.")
+
             team_oprs = []
 
             for event in self.events(year):
@@ -1286,6 +1290,8 @@ class Team(BaseSchema):
                     team_oprs.append(getattr(event_oprs, f"{metric.name.lower()}s")[self.key])
 
             return statistics.mean(team_oprs)
+        else:
+            raise ValueError(f"{metric} incompatible with `Team.average`.")
 
     def location(self) -> typing.Optional[typing.Tuple[float, float]]:
         """
