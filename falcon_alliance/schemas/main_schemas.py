@@ -54,7 +54,7 @@ class District(BaseSchema):
 
             try:
                 return func(self, *args, **kwargs)
-            except aiohttp.ContentTypeError:
+            except aiohttp.ContentTypeError:  # pragma: no cover
                 if not silent:
                     raise NotModifiedSinceError from None
                 else:
@@ -62,7 +62,7 @@ class District(BaseSchema):
 
                     if "list" in return_type:
                         return []
-                    elif "dict" in return_type:  # pragma: no cover
+                    elif "dict" in return_type:
                         return {}
 
         return wrapper
@@ -233,7 +233,7 @@ class Event(BaseSchema):
 
             try:
                 return func(self, *args, **kwargs)
-            except aiohttp.ContentTypeError:
+            except aiohttp.ContentTypeError:  # pragma: no cover
                 if not silent:
                     raise NotModifiedSinceError from None
                 else:
@@ -241,7 +241,7 @@ class Event(BaseSchema):
 
                     if "list" in return_type:
                         return []
-                    elif "dict" in return_type:  # pragma: no cover
+                    elif "dict" in return_type:
                         return {}
 
         return wrapper
