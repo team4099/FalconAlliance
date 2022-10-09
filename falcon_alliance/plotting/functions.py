@@ -51,7 +51,7 @@ def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
 
 
 def to_plot(
-    x: collections.abc.Iterable[typing.Any], y: collections.abc.Iterable[typing.Any]
+    x: collections.abc.Iterable[typing.Any], y: collections.abc.Iterable[typing.Any], title: str = ""
 ) -> typing.Tuple[plt.Figure, plt.Axes]:
     """
     Plots FalconAlliance data into a readable and understandable format.
@@ -59,17 +59,24 @@ def to_plot(
     Args:
         x (Iterable[Any]): Data to plot on the x axis.
         y (Iterable[Any]): Data to plot on the y axis.
+        title (str): The title for the plot.
 
     Returns:
         typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the data was plotted on.
     """  # noqa
     fig: plt.Figure = plt.figure(figsize=(12, 6))
-    ax: plt.Axes = plt.subplot(1, 1, 1)
+    fig.set_tight_layout(True)
 
+    ax: plt.Axes = plt.subplot(1, 1, 1)
     ax.grid(True)
 
     # in case of the usage of AppliedFunction
-    ax.plot(list(x), list(y))
+    x, y = list(x), list(y)
+
+    ax.plot(x, y, linewidth=2.5)
+    ax.fill_between(x, y, alpha=0.25)
+    ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
+
     plt.show()
 
     return fig, ax
