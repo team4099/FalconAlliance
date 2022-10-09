@@ -30,6 +30,18 @@ class AppliedFunction:
     def __str__(self):
         return f"AppliedFunction({self._applied_result})"
 
+    def for_each(self, to_apply: typing.Callable) -> "AppliedFunction":
+        """
+        Applies a function to each element in a 2D list.
+
+        Args:
+            to_apply: A callable which is called with each element in a 2D list.
+
+        Returns:
+            AppliedFunction: An AppliedFunction instance containing the new applied list.
+        """
+        return AppliedFunction([[to_apply(element) for element in lst] for lst in self._applied_result])
+
 
 def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
     """
