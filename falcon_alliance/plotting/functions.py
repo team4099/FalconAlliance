@@ -1,8 +1,28 @@
 import collections.abc
 import typing
 from itertools import zip_longest
+from operator import attrgetter, itemgetter
 
 import matplotlib.pyplot as plt
+
+
+class AppliedFunction:
+    """Represents an applied function, utilized for plotting."""
+
+    def __init__(self, applied_result: list):
+        self._applied_result = applied_result
+
+    def __getitem__(self, item):
+        return AppliedFunction([*map(itemgetter(item), self._applied_result)])
+
+    def __getattr__(self, item):
+        return AppliedFunction([*map(attrgetter(item), self._applied_result)])
+
+    def __iter__(self):
+        return iter(self._applied_result)
+
+    def __str__(self):
+        return str(self._applied_result)
 
 
 def apply(function: typing.Callable, **kwargs) -> list:
@@ -21,7 +41,7 @@ def apply(function: typing.Callable, **kwargs) -> list:
 
     formatted_kwargs = []
 
-    for zipped in zip_longest(kwargs_iterables.values()):
+    for zipped in zip_longest(*kwargs_iterables.values()):
         formatted_kwargs.append({name: value for name, value in zip(kwargs_iterables.keys(), zipped)})
 
     return [function(**kwargs_constant, **fmt_kwargs) for fmt_kwargs in formatted_kwargs]
