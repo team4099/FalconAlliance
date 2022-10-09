@@ -86,8 +86,8 @@ def to_plot(
         y_smooth = spl(x_smooth)
         x, y = x_smooth, y_smooth
 
-    ax.plot(x, y, linewidth=2.5)
-    ax.fill_between(x, y, alpha=0.25)
+    ax.plot(x, y, c=color, linewidth=2.5)
+    ax.fill_between(x, y, alpha=0.25, color=color)
     ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
     plt.show()
