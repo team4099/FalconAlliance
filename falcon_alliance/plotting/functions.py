@@ -12,6 +12,9 @@ class AppliedFunction:
     def __init__(self, applied_result: list):
         self._applied_result = applied_result
 
+    def __call__(self, *args, **kwargs):
+        return AppliedFunction([*map(lambda function: function(*args, **kwargs), self._applied_result)])
+
     def __getitem__(self, item):
         return AppliedFunction([*map(itemgetter(item), self._applied_result)])
 
