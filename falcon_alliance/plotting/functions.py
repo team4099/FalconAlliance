@@ -4,6 +4,19 @@ import typing
 import matplotlib.pyplot as plt
 
 
+def apply(function: typing.Callable, **kwargs) -> list:
+    """
+    Applies keyword arguments to the function passed in, utilized for plotting.
+
+    Args:
+        function (Callable): A function to apply the kwargs to.
+        **kwargs: The keyword argument name is the corresponding keyword argument for the function and the value is either a certain value that tells the function to keep that value constant or an iterable representing the different values to call the function with.
+
+    Returns:
+        list: A list of all the return values of the function based on the values that were applied to the function.
+    """  # noqa
+
+
 def to_plot(
     x: collections.abc.Iterable[typing.Any], y: collections.abc.Iterable[typing.Any]
 ) -> typing.Tuple[plt.Figure, plt.Axes]:
