@@ -185,23 +185,25 @@ class Plotter:
 
     def violin_plot(
         self,
-        data: collections.abc.Iterable[typing.List],
+        data: collections.abc.Iterable[typing.List[typing.Any]],
         positions: collections.abc.Iterable[typing.Any],
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
         secondary_color: str = "#262626",
+        style_plot: bool = True,
     ) -> typing.Tuple[plt.Figure, plt.Axes]:
         """
         Plots the FalconAlliance data given into a violin plot.
 
         Args:
-            data (Iterable[List]): Array-like data for the violin plot itself.
+            data (Iterable[List[Any]): Array-like data for the violin plot itself.
             positions (Iterable[Any]): Data containing the positions for each 'violin' (the x-axis for vertical violin plots, basically).
             auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
             title (str): The title for the plot.
             color (str): Color to use when plotting. #FBBB00 by default.
             secondary_color (str): Color to use for the edge color of the violins. #262626 by default.
+            style_plot (bool): Boolean representing whether or not to use a custom style for the violin plot. Will default to matplotlib's standard style for a violin plot if False.
 
         Returns:
             typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
@@ -220,14 +222,20 @@ class Plotter:
         # in case of the usage of AppliedFunction
         data, positions = list(data), list(positions)
 
-        vp = ax.violinplot(data, positions, showmeans=False, showmedians=False, showextrema=False)
+        if style_plot:
+            vp = ax.violinplot(data, positions, showextrema=False)
 
-        for pc in vp["bodies"]:
-            pc.set_facecolor(color)
-            pc.set_edgecolor(secondary_color)
-            pc.set_alpha(0.7)
+            for pc in vp["bodies"]:
+                pc.set_facecolor(color)
+                pc.set_edgecolor(secondary_color)
+                pc.set_alpha(0.75)
+
+            ax.vlines(positions, [*map(min, data)], [*map(max, data)], secondary_color)
+        else:
+            ax.violinplot(data, positions)
 
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
+        ax.set_xticks(positions)
 
         if auto_plot:
             plt.show()
