@@ -4,6 +4,8 @@ from itertools import zip_longest
 from operator import attrgetter, itemgetter
 
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.interpolate import BSpline, make_interp_spline
 
 
 class AppliedFunction:
@@ -51,7 +53,10 @@ def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
 
 
 def to_plot(
-    x: collections.abc.Iterable[typing.Any], y: collections.abc.Iterable[typing.Any], title: str = ""
+    x: collections.abc.Iterable[typing.Any],
+    y: collections.abc.Iterable[typing.Any],
+    title: str = "",
+    smoothen: bool = False,
 ) -> typing.Tuple[plt.Figure, plt.Axes]:
     """
     Plots FalconAlliance data into a readable and understandable format.
@@ -60,6 +65,7 @@ def to_plot(
         x (Iterable[Any]): Data to plot on the x axis.
         y (Iterable[Any]): Data to plot on the y axis.
         title (str): The title for the plot.
+        smoothen (bool): Determines whether or not to smoothen a line when plotting.
 
     Returns:
         typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the data was plotted on.
