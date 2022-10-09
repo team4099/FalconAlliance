@@ -25,7 +25,7 @@ class AppliedFunction:
         return str(self._applied_result)
 
 
-def apply(function: typing.Callable, **kwargs) -> list:
+def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
     """
     Applies keyword arguments to the function passed in, utilized for plotting.
 
@@ -34,7 +34,7 @@ def apply(function: typing.Callable, **kwargs) -> list:
         **kwargs: The keyword argument name is the corresponding keyword argument for the function and the value is either a certain value that tells the function to keep that value constant or an iterable representing the different values to call the function with.
 
     Returns:
-        list: A list of all the return values of the function based on the values that were applied to the function.
+        AppliedFunction: A custom class containing the list with the results of the applied function -- this instance can be used to pick out a specific attribute or a certain index for each element.
     """  # noqa
     kwargs_constant = {name: value for name, value in kwargs.items() if not isinstance(value, collections.abc.Iterable)}
     kwargs_iterables = {name: value for name, value in kwargs.items() if name not in kwargs_constant.keys()}
@@ -44,7 +44,7 @@ def apply(function: typing.Callable, **kwargs) -> list:
     for zipped in zip_longest(*kwargs_iterables.values()):
         formatted_kwargs.append({name: value for name, value in zip(kwargs_iterables.keys(), zipped)})
 
-    return [function(**kwargs_constant, **fmt_kwargs) for fmt_kwargs in formatted_kwargs]
+    return AppliedFunction([function(**kwargs_constant, **fmt_kwargs) for fmt_kwargs in formatted_kwargs])
 
 
 def to_plot(
