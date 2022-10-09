@@ -22,7 +22,7 @@ class AppliedFunction:
         return iter(self._applied_result)
 
     def __str__(self):
-        return str(self._applied_result)
+        return f"AppliedFunction({self._applied_result})"
 
 
 def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
@@ -65,7 +65,8 @@ def to_plot(
 
     ax.grid(True)
 
-    ax.plot(x, y)
+    # in case of the usage of AppliedFunction
+    ax.plot(list(x), list(y))
     plt.show()
 
     return fig, ax
