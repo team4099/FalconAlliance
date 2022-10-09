@@ -1,5 +1,6 @@
 import collections.abc
 import typing
+from itertools import zip_longest
 
 import matplotlib.pyplot as plt
 
@@ -15,6 +16,15 @@ def apply(function: typing.Callable, **kwargs) -> list:
     Returns:
         list: A list of all the return values of the function based on the values that were applied to the function.
     """  # noqa
+    kwargs_constant = {name: value for name, value in kwargs.items() if not isinstance(value, collections.abc.Iterable)}
+    kwargs_iterables = {name: value for name, value in kwargs.items() if name not in kwargs_constant.keys()}
+
+    formatted_kwargs = []
+
+    for zipped in zip_longest(kwargs_iterables.values()):
+        formatted_kwargs.append({name: value for name, value in zip(kwargs_iterables.keys(), zipped)})
+
+    return [function(**kwargs_constant, **fmt_kwargs) for fmt_kwargs in formatted_kwargs]
 
 
 def to_plot(
