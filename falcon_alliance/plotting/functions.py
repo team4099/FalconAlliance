@@ -57,6 +57,7 @@ def to_plot(
     y: collections.abc.Iterable[typing.Any],
     title: str = "",
     smoothen: bool = False,
+    color: str = "#FBBB00",
 ) -> typing.Tuple[plt.Figure, plt.Axes]:
     """
     Plots FalconAlliance data into a readable and understandable format.
@@ -66,18 +67,24 @@ def to_plot(
         y (Iterable[Any]): Data to plot on the y axis.
         title (str): The title for the plot.
         smoothen (bool): Determines whether or not to smoothen a line when plotting.
+        color (str): Color to use when plotting. #FBBB00 by default.
 
     Returns:
         typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the data was plotted on.
     """  # noqa
     fig: plt.Figure = plt.figure(figsize=(12, 6))
-    fig.set_tight_layout(True)
 
     ax: plt.Axes = plt.subplot(1, 1, 1)
     ax.grid(True)
 
     # in case of the usage of AppliedFunction
     x, y = list(x), list(y)
+
+    if smoothen:
+        x_smooth = np.linspace(min(x), max(x), 200)
+        spl = make_interp_spline(x, y, k=3)
+        y_smooth = spl(x_smooth)
+        x, y = x_smooth, y_smooth
 
     ax.plot(x, y, linewidth=2.5)
     ax.fill_between(x, y, alpha=0.25)
