@@ -259,7 +259,7 @@ class Plotter:
         secondary_color: str = "#262626",
     ) -> typing.Tuple[plt.Figure, plt.Axes]:
         """
-        Plots the FalconAlliance data given into a violin plot.
+        Plots the FalconAlliance data given into a bar plot.
 
         Args:
             x (Iterable[Any]): Data containing the data for the x-axis.
