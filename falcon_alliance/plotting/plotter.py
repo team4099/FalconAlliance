@@ -140,6 +140,7 @@ class Plotter:
         color: str = "",
         secondary_color: str = "#262626",
         use_cmap: bool = True,
+        marker_size: typing.Union[int, float] = plt.rcParams["lines.markersize"] ** 2,
     ) -> typing.Tuple[plt.Figure, plt.Axes]:
         """
         Plots the FalconAlliance data given into a scatter plot.
@@ -152,6 +153,7 @@ class Plotter:
             color (str): Color to use when plotting. #FBBB00 by default.
             secondary_color (str): Color to use for the higher points on the scatter plot. #262626 by default.
             use_cmap (bool): Boolean representing whether or not to use a colormap when plotting the scatter plot. True by default.
+            marker_size (int, float): Number representing what to set the marker size (increases/decreases size of individual points).
 
         Returns:
             typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
@@ -172,7 +174,12 @@ class Plotter:
 
         if use_cmap:
             cmap = LinearSegmentedColormap.from_list("falconalliance_cmap", [color, secondary_color])
-            ax.scatter(x, y, c=y, cmap=cmap, zorder=100)
+
+            try:
+                ax.scatter(x, y, c=y, cmap=cmap, zorder=100, s=marker_size)
+            except ValueError:
+                ax.scatter(x, y, c=range(len(y)), cmap=cmap, zorder=100, s=marker_size)
+
         else:
             ax.scatter(x, y)
 
@@ -239,5 +246,45 @@ class Plotter:
 
         if auto_plot:
             plt.show()
+
+        return fig, ax
+
+    def bar_plot(
+        self,
+        x: collections.abc.Iterable[typing.Any],
+        height: collections.abc.Iterable[typing.Any],
+        auto_plot: bool = None,
+        title: str = "",
+        color: str = "",
+        secondary_color: str = "#262626",
+    ) -> typing.Tuple[plt.Figure, plt.Axes]:
+        """
+        Plots the FalconAlliance data given into a violin plot.
+
+        Args:
+            x (Iterable[Any]): Data containing the data for the x-axis.
+            height (Iterable[Any]): Data containing the height of each "bar" on the bar chart (y-axis data).
+            auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
+            title (str): The title for the plot.
+            color (str): Color to use when plotting. #FBBB00 by default.
+            secondary_color (str): Color to use for the edge color of the bar chart. #262626 by default.
+        Returns:
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+        """  # noqa
+        if not color:
+            color = self.default_color
+
+        if auto_plot is None:
+            auto_plot = self.auto_plot
+
+        fig: plt.Figure = plt.figure(figsize=(12, 6))
+
+        ax: plt.Axes = plt.subplot(1, 1, 1)
+        ax.grid(True, zorder=0)
+
+        ax.bar(x, height, alpha=0.75, facecolor=color, edgecolor=secondary_color)
+
+        if auto_plot:
+            plt.plot()
 
         return fig, ax
