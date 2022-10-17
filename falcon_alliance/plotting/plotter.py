@@ -282,10 +282,10 @@ class Plotter:
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
 
-        ax.bar(x, height, alpha=0.75, facecolor=color, edgecolor=secondary_color)
+        ax.bar(x, height, alpha=0.75, facecolor=color, edgecolor=secondary_color, zorder=100)
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
         if auto_plot:
-            plt.plot()
+            plt.show()
 
         return fig, ax
