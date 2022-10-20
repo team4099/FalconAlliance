@@ -373,7 +373,18 @@ class Plotter:
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
 
-        ax.boxplot(data, vert=vertical, positions=positions)
+        ax.boxplot(
+            data,
+            vert=vertical,
+            positions=positions,
+            patch_artist=True,
+            showmeans=False,
+            showfliers=False,
+            medianprops={"color": secondary_color, "linewidth": 0.5},
+            boxprops={"facecolor": color, "edgecolor": secondary_color, "linewidth": 1.5, "alpha": 0.75},
+            whiskerprops={"color": secondary_color, "linewidth": 1.5},
+            capprops={"color": secondary_color, "linewidth": 1.5},
+        )
 
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
