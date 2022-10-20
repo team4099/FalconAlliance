@@ -310,7 +310,7 @@ class Plotter:
         Plots the FalconAlliance data given into a histogram.
 
         Args:
-            x (Iterable[Any]): Data containing the data for the x-axis.
+            x (Iterable[Any]): Iterable containing the data for the x-axis.
             bins (int): The number of "bins" to plot in the histogram (the buckets, essentially).
             auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
             title (str): The title for the plot.
@@ -331,6 +331,48 @@ class Plotter:
         ax.grid(True, zorder=0)
 
         ax.hist(list(x), bins, alpha=0.75, facecolor=color, edgecolor=secondary_color, zorder=100)
+        ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
+
+        if auto_plot:
+            plt.show()
+
+        return fig, ax
+
+    def box_plot(
+        self,
+        data: collections.abc.Iterable[typing.Any],
+        vertical: bool = None,
+        positions: typing.List[int] = [],
+        auto_plot: bool = None,
+        title: str = "",
+        color: str = "",
+        secondary_color: str = "#262626",
+    ) -> typing.Tuple[plt.Figure, plt.Axes]:
+        """
+        Plots the FalconAlliance data given into a histogram.
+
+        Args:
+            data (Iterable[Any]): Iterable containing the data to make the box and whisker plots for.
+            vertical (bool): Boolean representing whether or not to plot the box plots vertically.
+            positions (List[int]): List containing the positions on the x-axis to plot each box plot.
+            auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
+            title (str): The title for the plot.
+            color (str): Color to use when plotting. #FBBB00 by default.
+            secondary_color (str): Color to use for the edge color of the bins. #262626 by default.
+        Returns:
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+        """  # noqa
+        if not color:
+            color = self.default_color
+
+        if auto_plot is None:
+            auto_plot = self.auto_plot
+
+        fig: plt.Figure = plt.figure(figsize=(12, 6))
+
+        ax: plt.Axes = plt.subplot(1, 1, 1)
+        ax.grid(True, zorder=0)
+
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
         if auto_plot:
