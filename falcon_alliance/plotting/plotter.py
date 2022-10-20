@@ -330,7 +330,7 @@ class Plotter:
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
 
-        ax.hist(list(x), bins, alpha=0.75, facecolor=color, edgecolor=secondary_color, zorder=100)
+        ax.hist(list(x), bins, alpha=0.9, facecolor=color, edgecolor=secondary_color, zorder=100)
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
         if auto_plot:
@@ -342,7 +342,7 @@ class Plotter:
         self,
         data: collections.abc.Iterable[typing.Any],
         vertical: bool = None,
-        positions: typing.List[int] = [],
+        positions: typing.List[int] = None,
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
@@ -372,6 +372,8 @@ class Plotter:
 
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
+
+        ax.boxplot(data, vert=vertical, positions=positions)
 
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
