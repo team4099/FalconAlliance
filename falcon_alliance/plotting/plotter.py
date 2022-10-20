@@ -83,6 +83,7 @@ class Plotter:
         self,
         x: collections.abc.Iterable[typing.Any],
         y: collections.abc.Iterable[typing.Any],
+        fill_between: typing.Tuple[collections.abc.Iterable[typing.Any], collections.abc.Iterable[typing.Any]] = (),
         auto_plot: bool = None,
         title: str = "",
         smoothen: bool = False,
@@ -94,6 +95,7 @@ class Plotter:
         Args:
             x (Iterable[Any]): Data to plot on the x axis.
             y (Iterable[Any]): Data to plot on the y axis.
+            fill_between(Tuple[Iterable[Any], Iterable[Any]]): Fills betweeen the first and second elements in the tuple on the plot.
             auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
             title (str): The title for the plot.
             smoothen (bool): Determines whether or not to smoothen a line when plotting.
@@ -123,7 +125,12 @@ class Plotter:
             x, y = x_smooth, y_smooth
 
         ax.plot(x, y, c=color, linewidth=2.5)
-        ax.fill_between(x, y, alpha=0.25, color=color)
+
+        if not fill_between:
+            ax.fill_between(x, y, alpha=0.25, color=color)
+        else:
+            ax.fill_between(x, fill_between[0], fill_between[1], alpha=0.5, color=color)
+
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
         if auto_plot:
