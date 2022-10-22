@@ -338,11 +338,11 @@ class Plotter:
 
         return fig, ax
 
-    def box_plot(
+    def pie_chart(
         self,
-        data: collections.abc.Iterable[typing.Any],
-        vertical: bool = None,
-        positions: typing.List[int] = None,
+        wedges: collections.abc.Iterable[typing.Any],
+        explode: collections.abc.Iterable[int],
+        labels: collections.abc.Iterable[str],
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
@@ -352,9 +352,9 @@ class Plotter:
         Plots the FalconAlliance data given into a histogram.
 
         Args:
-            data (Iterable[Any]): Iterable containing the data to make the box and whisker plots for.
-            vertical (bool): Boolean representing whether or not to plot the box plots vertically.
-            positions (List[int]): List containing the positions on the x-axis to plot each box plot.
+            wedges (Iterable[Any]): Data containing the size of each wedge of the pie chart.
+            explode (Iterable[int]): Iterable of the same length as wedges pertaining to how much to offset each wedge.
+            labels (Iterable[str]): Labels for each wedge.
             auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
             title (str): The title for the plot.
             color (str): Color to use when plotting. #FBBB00 by default.
@@ -372,19 +372,6 @@ class Plotter:
 
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
-
-        ax.boxplot(
-            data,
-            vert=vertical,
-            positions=positions,
-            patch_artist=True,
-            showmeans=False,
-            showfliers=False,
-            medianprops={"color": secondary_color, "linewidth": 0.5},
-            boxprops={"facecolor": color, "edgecolor": secondary_color, "linewidth": 1.5, "alpha": 0.75},
-            whiskerprops={"color": secondary_color, "linewidth": 1.5},
-            capprops={"color": secondary_color, "linewidth": 1.5},
-        )
 
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
