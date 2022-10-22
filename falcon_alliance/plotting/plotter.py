@@ -3,9 +3,10 @@ import typing
 from itertools import zip_longest
 from operator import attrgetter, itemgetter
 
+import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.colors import LinearSegmentedColormap, rgb2hex
 from scipy.interpolate import make_interp_spline
 
 
@@ -163,7 +164,7 @@ class Plotter:
             marker_size (int, float): Number representing what to set the marker size (increases/decreases size of individual points).
 
         Returns:
-            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the plot is on.
         """  # noqa
         if not color:
             color = self.default_color
@@ -220,7 +221,7 @@ class Plotter:
             style_plot (bool): Boolean representing whether or not to use a custom style for the violin plot. Will default to matplotlib's standard style for a violin plot if False.
 
         Returns:
-            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the plot is on.
         """  # noqa
         if not color:
             color = self.default_color
@@ -276,7 +277,7 @@ class Plotter:
             color (str): Color to use when plotting. #FBBB00 by default.
             secondary_color (str): Color to use for the edge color of the bar chart. #262626 by default.
         Returns:
-            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the plot is on.
         """  # noqa
         if not color:
             color = self.default_color
@@ -317,7 +318,7 @@ class Plotter:
             color (str): Color to use when plotting. #FBBB00 by default.
             secondary_color (str): Color to use for the edge color of the bins. #262626 by default.
         Returns:
-            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the plot is on.
         """  # noqa
         if not color:
             color = self.default_color
@@ -340,27 +341,27 @@ class Plotter:
 
     def pie_chart(
         self,
-        wedges: collections.abc.Iterable[typing.Any],
-        explode: collections.abc.Iterable[int],
-        labels: collections.abc.Iterable[str],
+        wedges: collections.abc.Iterable[int],
+        explode: collections.abc.Iterable[int] = None,
+        labels: collections.abc.Iterable[str] = None,
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
         secondary_color: str = "#262626",
     ) -> typing.Tuple[plt.Figure, plt.Axes]:
         """
-        Plots the FalconAlliance data given into a histogram.
+        Plots the FalconAlliance data given into a pie chart.
 
         Args:
-            wedges (Iterable[Any]): Data containing the size of each wedge of the pie chart.
-            explode (Iterable[int]): Iterable of the same length as wedges pertaining to how much to offset each wedge.
-            labels (Iterable[str]): Labels for each wedge.
+            wedges (Iterable[int]): Data containing the size of each wedge of the pie chart.
+            explode (Iterable[int], optional): Iterable of the same length as wedges pertaining to how much to offset each wedge.
+            labels (Iterable[str], optional): Labels for each wedge.
             auto_plot (bool): Determines whether or not to plot the axes automatically in the function itself.
             title (str): The title for the plot.
             color (str): Color to use when plotting. #FBBB00 by default.
-            secondary_color (str): Color to use for the edge color of the bins. #262626 by default.
+            secondary_color (str): Color to use for the gradient of the pie chart. #262626 by default.
         Returns:
-            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the scatter plot and a plt.Axes object representing the axes the scatter plot is on.
+            typing.Tuple[plt.Figure, plt.Axes]: Returns a plt.Figure object representing the figure created for the plot and a plt.Axes object representing the axes the plot is on.
         """  # noqa
         if not color:
             color = self.default_color
@@ -373,6 +374,22 @@ class Plotter:
         ax: plt.Axes = plt.subplot(1, 1, 1)
         ax.grid(True, zorder=0)
 
+        wedges = list(wedges)
+
+        gradient_colors = LinearSegmentedColormap.from_list(
+            "color2secondarycolor", [color, secondary_color, color], N=len(wedges)
+        )
+
+        if not explode:
+            explode = [0.01 for _ in range(len(wedges))]
+
+        ax.pie(
+            x=wedges,
+            explode=explode,
+            labels=labels,
+            counterclock=False,
+            colors=[gradient_colors(n) for n in range(gradient_colors.N)],
+        )
         ax.set_title(title, fontdict={"fontweight": "bold"}, loc="left")
 
         if auto_plot:
