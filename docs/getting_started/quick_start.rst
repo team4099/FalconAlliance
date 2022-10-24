@@ -207,4 +207,6 @@ You can also use the `apply` function part of the plotting features for making p
        plotter.to_plot(years, matches_by_year, title="Team 4099's Matches by Year")
 
 
-If you want to do something more advanced, there's also support for scatter plots, violin plots, pie charts, histograms and bar charts! Check out :ref:`falcon_alliance.plotting` for more information about these methods of plotting and check out the Examples for more advanced examples with plotting!
+.. tip::
+
+   If you want to do something more advanced, there's also support for scatter plots, violin plots, pie charts, histograms and bar charts! Check out :ref:`falcon_alliance.plotting` for more information about these methods of plotting and check out the Examples for more advanced examples with plotting!
