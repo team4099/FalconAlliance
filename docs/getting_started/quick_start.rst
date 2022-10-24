@@ -156,7 +156,7 @@ However, we can access attributes via either **dot syntax** which is accessing a
 
    import falcon_alliance
 
-   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
        team4099 = api_client.team("frc4099")
        print(team4099.state_prov)
 
@@ -166,8 +166,45 @@ Or you can access attributes via **dictionary syntax** which is accessing an att
 
    import falcon_alliance
 
-   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+   with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
        team4099 = api_client.team("frc4099")
        print(team4099["state_prov"])
 
 This is useful for when you have code that you are migrating to FalconAlliance from sending requests raw and want to use existing syntax.
+
+Plotting FalconAlliance Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you've found yourself wanting to plot data but not wanting to go through writing redundant code over and over again to plot data, you can use FalconAlliance's implementation for plotting data as a quick way to plot your data in a nice, easy-to-read format.
+Below is an example of plotting a basic line graph (Team 4099's total number of matches by year):
+
+.. code-block:: python
+
+   from falcon_alliance import ApiClient, Team, Plotter
+
+   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+       team4099 = Team(4099)
+       plotter = Plotter()
+
+       years = range(2012, 2023)  # x data
+       matches_by_year = [team4099.matches(year) for year in years]  # y data
+
+       plotter.to_plot(years, matches_by_year, title="Team 4099's Matches by Year")
+
+You can also use the `apply` function part of the plotting features for making plotting simpler, below is an equivalent to the above (it doesn't seem like much of a change but it gets a lot less clunkier with more complex plots):
+
+.. code-block:: python
+
+   from falcon_alliance import apply, ApiClient, Team, Plotter
+
+   with ApiClient(api_key=YOUR_API_KEY) as api_client:
+       team4099 = Team(4099)
+       plotter = Plotter()
+
+       years = range(2012, 2023)  # x data
+       matches_by_year = apply(team4099.matches, year=years)  # y data
+
+       plotter.to_plot(years, matches_by_year, title="Team 4099's Matches by Year")
+
+
+If you want to do something more advanced, there's also support for scatter plots, violin plots, pie charts, histograms and bar charts! Check out :ref:`falcon_alliance.plotting` for more information about these methods of plotting and check out the Examples for more advanced examples with plotting!
