@@ -47,6 +47,22 @@ class InternalData:
                 return response_json
 
     @classmethod
+    async def post(cls, current_instance: typing.Any, data: typing.Any, url: str) -> None:
+        """
+        Sends a POST request to the TBA API.
+
+        Parameters:
+            current_instance (typing.Any): The instance where the post method is being called from.
+            data (typing.Any): The data to send with the POST request.
+            url (str): A string representing which URL to send a POST request to.
+
+        Returns:
+            An aiohttp.ClientResponse object representing the response the POST request returned.
+        """
+        async with cls.session.post(url=url, data=data):
+            ...
+
+    @classmethod
     async def set_session(cls) -> None:
         """Initializes a `aiohttp.ClientSession` instance to send GET/POST requests out of."""
         if cls.session is None:

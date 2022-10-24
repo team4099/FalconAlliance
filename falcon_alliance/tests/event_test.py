@@ -185,3 +185,31 @@ def test_event_teams_extra_parameters():
     with pytest.raises(ValueError):
         with ApiClient():
             Event("2022chcmp").teams(simple=True, keys=True, statuses=True)
+
+
+def test_event_min_match_score():
+    """Tests `Event.min` to retrieve the minimum match score during an event."""
+    with ApiClient():
+        minimum_match_score = Event("2022chcmp").min(metric=Metrics.MATCH_SCORE)
+        assert isinstance(minimum_match_score, Match)
+
+
+def test_team_min_opr():
+    """Tests `Event.min` to retrieve the minimum OPR/DPR/CCWM during an event."""
+    with ApiClient():
+        minimum_opr, team = Event("2022chcmp").min(metric=Metrics.OPR)
+        assert isinstance(minimum_opr, float) and isinstance(team, Team)
+
+
+def test_event_max_match_score():
+    """Tests `Event.max` to retrieve the maximum match score during an event."""
+    with ApiClient():
+        maximum_match_score = Event("2022chcmp").max(metric=Metrics.MATCH_SCORE)
+        assert isinstance(maximum_match_score, Match)
+
+
+def test_event_max_opr():
+    """Tests `Event.max` to retrieve the maximum OPR/DPR/CCWM during an event."""
+    with ApiClient():
+        maximum_opr, team = Event("2022chcmp").max(metric=Metrics.OPR)
+        assert isinstance(maximum_opr, float) and isinstance(team, Team)
