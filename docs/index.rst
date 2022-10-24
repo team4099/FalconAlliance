@@ -33,3 +33,4 @@ Contents
    reference/media.rst
    reference/robot.rst
    reference/team.rst
+   reference/plotting.rst
