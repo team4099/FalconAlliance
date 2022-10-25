@@ -756,6 +756,51 @@ class Event(BaseSchema):
             )
         )
 
+    def update_matches(self, data: typing.List[dict]) -> None:
+        """
+        POST request to update info regarding matches for an event.
+
+        Parameters:
+            data (list[dict]): List of dictionaries containing information about each match.
+        """
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/matches/update",
+                data=dumps(data),
+            )
+        )
+
+    def delete_matches(self, data: typing.List[str]) -> None:
+        """
+        POST request to delete matches by match keys for an event.
+
+        Parameters:
+            data (list[str]): List of matches to delete (eg ["qm1", "qm2", ...])
+        """
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/matches/delete",
+                data=dumps(data),
+            )
+        )
+
+    def update_team_list(self, data: typing.List[dict]) -> None:
+        """
+        POST request to update info regarding rankings for an event.
+
+        Parameters:
+            data (list[dict]): List of dictionaries containing information about the rankings (breakdowns used to rank teams, the actual rankings, etc.)
+        """  # noqa
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/rankings/update",
+                data=dumps(data),
+            )
+        )
+
 
 class Team(BaseSchema):
     """Class representing a team's metadata with methods to get team specific data.
