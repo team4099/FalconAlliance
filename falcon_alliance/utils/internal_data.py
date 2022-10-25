@@ -68,10 +68,9 @@ class InternalData:
                 )
             ).hexdigest(),
         }
-
         async with cls.session.post(url=url, data=data, headers=headers) as response:
             if response.status != 200:
-                raise TBAError(await response.text())
+                raise TBAError((await response.json())["Error"])
 
     @classmethod
     async def set_session(cls) -> None:
