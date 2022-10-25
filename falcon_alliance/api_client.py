@@ -3,6 +3,7 @@ import functools
 import itertools
 import os
 import typing
+from json import dumps
 from types import TracebackType
 
 import aiohttp
@@ -39,7 +40,7 @@ class ApiClient:
         ["2022iri_f1m1", "2022iri_f1m2", ...]
     """
 
-    def __init__(self, api_key: str = None):
+    def __init__(self, api_key: str = None, auth_secret: str = "", event_key: str = ""):
         if api_key is None:
             try:
                 api_key = os.environ["TBA_API_KEY"]
@@ -48,6 +49,12 @@ class ApiClient:
                 api_key = os.environ["API_KEY"]
 
         self._headers = {"X-TBA-Auth-Key": api_key}
+        self.auth_secret = auth_secret
+        self.event_key = event_key
+
+        if not event_key and auth_secret:
+            raise ValueError("Event key not passed in even though your authentication secret was passed in.")
+
         self.etag = ""
         BaseSchema.add_headers(self._headers)
         InternalData.loop.run_until_complete(InternalData.set_session())

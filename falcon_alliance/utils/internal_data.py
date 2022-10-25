@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import typing
 
 import aiohttp
@@ -53,14 +54,24 @@ class InternalData:
 
         Parameters:
             current_instance (typing.Any): The instance where the post method is being called from.
-            data (typing.Any): The data to send with the POST request.
+            data (str): The data to send with the POST request in JSON format as a string.
             url (str): A string representing which URL to send a POST request to.
 
         Returns:
             An aiohttp.ClientResponse object representing the response the POST request returned.
         """
-        async with cls.session.post(url=url, data=data):
-            ...
+        headers = {
+            "X-TBA-Auth-Id": current_instance._auth_secret,
+            "X-TBA-Auth-Sig": hashlib.md5(
+                f"{current_instance._auth_secret}{url.replace('https://www.thebluealliance.com/', '')}{data}".encode(
+                    "utf8"
+                )
+            ).hexdigest(),
+        }
+
+        async with cls.session.post(url=url, data=data, headers=headers) as response:
+            if response.status != 200:
+                raise TBAError(await response.text())
 
     @classmethod
     async def set_session(cls) -> None:

@@ -5,6 +5,7 @@ import itertools
 import statistics
 import typing
 from dataclasses import dataclass
+from json import dumps
 from re import match
 from statistics import mean
 
@@ -709,6 +710,36 @@ class Event(BaseSchema):
             return statistics.mean(event_scores)
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
             return statistics.mean(getattr(self.oprs(), f"{metric._name_.lower()}s").values())
+
+    def update_info(self, data: dict) -> None:
+        """
+        POST request to update info for an event.
+
+        Parameters:
+            data (dict): Dictionary containing info that the event needs to be updated with (eg FIRST code, playoff type, and webcast URLs).
+        """  # noqa
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/info/update",
+                data=dumps(data),
+            )
+        )
+
+    def update_alliance_selections(self, data: typing.List[list]) -> None:
+        """
+        POST request to update info for an event.
+
+        Parameters:
+            data (list[list]): 2D list with each list representing an alliance and the elements inside each sublist representing keys in the corresponding alliance.
+        """  # noqa
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/alliance_selections/update",
+                data=dumps(data),
+            )
+        )
 
 
 class Team(BaseSchema):

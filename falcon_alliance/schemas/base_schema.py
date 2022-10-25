@@ -1,6 +1,7 @@
 class BaseSchema:
     """Base class for all schemas."""
 
+    _auth_secret = ""
     _headers = None
 
     def __init__(self):
@@ -44,3 +45,13 @@ class BaseSchema:
             headers (dict): A dictionary that is in the format of {"X-TBA-Auth-Key": api_key} for TBA be able to authorize sending requests.
         """  # noqa
         cls._headers = headers
+
+    @classmethod
+    def add_auth_secret(cls, auth_secret: str) -> None:
+        """
+        Adds the authentication secret for POST requests to the BaseSchema for all subclasses to access.
+
+        Args:
+            auth_secret (str): Authentication secret given by TBA for POST requests.
+        """
+        cls._auth_secret = auth_secret
