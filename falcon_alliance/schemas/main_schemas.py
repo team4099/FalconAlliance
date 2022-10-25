@@ -728,7 +728,7 @@ class Event(BaseSchema):
 
     def update_alliance_selections(self, data: typing.List[list]) -> None:
         """
-        POST request to update info for an event.
+        POST request to update info about alliance selections for an event.
 
         Parameters:
             data (list[list]): 2D list with each list representing an alliance and the elements inside each sublist representing keys in the corresponding alliance.
@@ -737,6 +737,21 @@ class Event(BaseSchema):
             InternalData.post(
                 self,
                 url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/alliance_selections/update",
+                data=dumps(data),
+            )
+        )
+
+    def update_awards(self, data: typing.List[dict]) -> None:
+        """
+        POST request to update info regarding awards for an event.
+
+        Parameters:
+            data (list[dict]): List of dictionaries containing information about each award (eg name of the award, recipient of the award, and the awardee).
+        """  # noqa
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/awards/update",
                 data=dumps(data),
             )
         )
