@@ -786,17 +786,44 @@ class Event(BaseSchema):
             )
         )
 
-    def update_team_list(self, data: typing.List[dict]) -> None:
+    def update_team_list(self, data: typing.List[str]) -> None:
         """
-        POST request to update info regarding rankings for an event.
-
+        POST request to update the team list for an event.
         Parameters:
-            data (list[dict]): List of dictionaries containing information about the rankings (breakdowns used to rank teams, the actual rankings, etc.)
-        """  # noqa
+            data (list[str]): List containing the keys of each team at the event.
+        """
         InternalData.loop.run_until_complete(
             InternalData.post(
                 self,
-                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/rankings/update",
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/team_list/update",
+                data=dumps(data),
+            )
+        )
+
+    def update_match_videos(self, data: dict) -> None:
+        """
+        POST request to update the match videos for an event.
+        Parameters:
+            data (dict): Mapping of partial match keys (i.e. qm1) to YouTube video IDs.
+        """
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/match_videos/update",
+                data=dumps(data),
+            )
+        )
+
+    def update_media(self, data: typing.List[str]) -> None:
+        """
+        POST request to update the media for an event.
+        Parameters:
+            data (list[str]): List of YouTube video IDs to add as media for an event.
+        """
+        InternalData.loop.run_until_complete(
+            InternalData.post(
+                self,
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/media/update",
                 data=dumps(data),
             )
         )
