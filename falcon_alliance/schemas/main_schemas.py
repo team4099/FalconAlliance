@@ -21,7 +21,7 @@ from .robot import Robot
 try:
     from utils import *
 except ImportError:
-    from ..utils import *
+    from ..falcon_alliance_utils import *
 
 __all__ = ["District", "Event", "Team"]
 PARSING_FORMAT = "%Y-%m-%d"

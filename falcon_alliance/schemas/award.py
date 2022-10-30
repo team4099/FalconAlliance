@@ -6,7 +6,7 @@ from .base_schema import BaseSchema
 try:
     from utils import *
 except ImportError:
-    from ..utils import *
+    from ..falcon_alliance_utils import *
 
 
 class Award(BaseSchema):

@@ -9,8 +9,8 @@ from types import TracebackType
 import aiohttp
 from dotenv import load_dotenv
 
+from .falcon_alliance_utils import *
 from .schemas import *
-from .utils import *
 
 __all__ = ["ApiClient"]
 

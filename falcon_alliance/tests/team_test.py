@@ -3,8 +3,8 @@ import typing
 import pytest
 
 from ..api_client import ApiClient
+from ..falcon_alliance_utils import *
 from ..schemas import *
-from ..utils import *
 
 
 def test_team_frc_number():

@@ -1,8 +1,8 @@
 import pytest
 
 from ..api_client import ApiClient
+from ..falcon_alliance_utils import *
 from ..schemas import *
-from ..utils import *
 
 
 def test_event_one_argument():

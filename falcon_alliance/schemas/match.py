@@ -7,7 +7,7 @@ from .base_schema import BaseSchema
 try:
     from utils import *  # noqa
 except ImportError:
-    from ..utils import *  # noqa
+    from ..falcon_alliance_utils import *  # noqa
 
 
 class Match(BaseSchema):
