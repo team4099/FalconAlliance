@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from .base_schema import BaseSchema
 
 try:
-    from utils import *
+    from falcon_alliance_utils import *
 except ImportError:
     from ..falcon_alliance_utils import *
 

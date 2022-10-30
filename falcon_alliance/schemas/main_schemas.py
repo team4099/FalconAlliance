@@ -19,7 +19,7 @@ from .media import Media
 from .robot import Robot
 
 try:
-    from utils import *
+    from falcon_alliance_utils import *
 except ImportError:
     from ..falcon_alliance_utils import *
 
