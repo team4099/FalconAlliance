@@ -661,7 +661,7 @@ class Event(BaseSchema):
         else:
             return [Team(**team_data) for team_data in response]
 
-    def min(self, metric: Metrics) -> typing.Union[Match, tuple[float, "Team"]]:
+    def min(self, metric: Metrics) -> typing.Union[Match, typing.Tuple[float, "Team"]]:
         """
         Retrieves the minimum of a certain metric based on the year.
 
@@ -678,7 +678,7 @@ class Event(BaseSchema):
             team_key, opr = min(getattr(self.oprs(), f"{metric._name_.lower()}s").items(), key=lambda tup: tup[1])
             return opr, Team(team_key)
 
-    def max(self, metric: Metrics) -> typing.Union[Match, tuple[float, "Team"]]:
+    def max(self, metric: Metrics) -> typing.Union[Match, typing.Tuple[float, "Team"]]:
         """
         Retrieves the maximum of a certain metric based on the year.
 
