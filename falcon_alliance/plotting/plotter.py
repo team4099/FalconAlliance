@@ -1,9 +1,7 @@
-import collections.abc
 import typing
 from itertools import zip_longest
 from operator import attrgetter, itemgetter
 
-import matplotlib.colors
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap, rgb2hex
@@ -55,7 +53,7 @@ def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
     Returns:
         AppliedFunction: A custom class containing a list of all the return values of the function based on the values that were applied to the function.
     """  # noqa
-    kwargs_constant = {name: value for name, value in kwargs.items() if not isinstance(value, collections.abc.Iterable)}
+    kwargs_constant = {name: value for name, value in kwargs.items() if not isinstance(value, typing.Iterable)}
     kwargs_iterables = {name: value for name, value in kwargs.items() if name not in kwargs_constant.keys()}
 
     formatted_kwargs = []
@@ -82,9 +80,9 @@ class Plotter:
 
     def plot(
         self,
-        x: collections.abc.Iterable[typing.Any],
-        y: collections.abc.Iterable[typing.Any],
-        fill_between: typing.Tuple[collections.abc.Iterable[typing.Any], collections.abc.Iterable[typing.Any]] = (),
+        x: typing.Iterable[typing.Any],
+        y: typing.Iterable[typing.Any],
+        fill_between: typing.Tuple[typing.Iterable[typing.Any], typing.Iterable[typing.Any]] = (),
         auto_plot: bool = None,
         title: str = "",
         smoothen: bool = False,
@@ -141,8 +139,8 @@ class Plotter:
 
     def scatter(
         self,
-        x: collections.abc.Iterable[typing.Any],
-        y: collections.abc.Iterable[typing.Any],
+        x: typing.Iterable[typing.Any],
+        y: typing.Iterable[typing.Any],
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
@@ -200,8 +198,8 @@ class Plotter:
 
     def violin_plot(
         self,
-        data: collections.abc.Iterable[typing.List[typing.Any]],
-        positions: collections.abc.Iterable[typing.Any],
+        data: typing.Iterable[typing.List[typing.Any]],
+        positions: typing.Iterable[typing.Any],
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
@@ -259,8 +257,8 @@ class Plotter:
 
     def bar_plot(
         self,
-        x: collections.abc.Iterable[typing.Any],
-        height: collections.abc.Iterable[typing.Any],
+        x: typing.Iterable[typing.Any],
+        height: typing.Iterable[typing.Any],
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
@@ -300,7 +298,7 @@ class Plotter:
 
     def histogram(
         self,
-        x: collections.abc.Iterable[typing.Any],
+        x: typing.Iterable[typing.Any],
         bins: int,
         auto_plot: bool = None,
         title: str = "",
@@ -341,9 +339,9 @@ class Plotter:
 
     def pie_chart(
         self,
-        wedges: collections.abc.Iterable[int],
-        explode: collections.abc.Iterable[int] = None,
-        labels: collections.abc.Iterable[str] = None,
+        wedges: typing.Iterable[int],
+        explode: typing.Iterable[int] = None,
+        labels: typing.Iterable[str] = None,
         auto_plot: bool = None,
         title: str = "",
         color: str = "",
