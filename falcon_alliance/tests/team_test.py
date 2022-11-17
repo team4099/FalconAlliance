@@ -335,6 +335,49 @@ def test_team_max_oprs():
         assert isinstance(maximum_opr, float) and isinstance(event_with_opr, Event)
 
 
+def test_team_average_match_score():
+    """Tests `Team.average` to retrieve average match score for a team."""
+    with ApiClient():
+        average_match_score = Team(4099).average(2022, metric=Metrics.MATCH_SCORE)
+        assert isinstance(average_match_score, (int, float))
+
+
+def test_team_average_match_score_with_event_code():
+    """Tests `Team.average` to retrieve average match score for a team for a certain event."""
+    with ApiClient():
+        average_match_score = Team(4099).average(2022, event_code="iri", metric=Metrics.MATCH_SCORE)
+        assert isinstance(average_match_score, (int, float))
+
+
+def test_team_average_opr():
+    """Tests `Team.average` to retrieve the average OPR for a team."""
+    with ApiClient():
+        average_opr = Team(4099).average(2022, metric=Metrics.OPR)
+        assert isinstance(average_opr, float)
+
+
+def test_team_location():
+    """Tests `Team.location` to retrieve the location of a team based on city/country/other metadata."""
+    with ApiClient():
+        team4099 = Team(4099, city="Poolesville", state_prov="MD", country="USA")
+        latitude, longitude = team4099.location()
+        assert round(latitude) == 39 and round(longitude) == -77
+
+
+def test_no_team_location():
+    """Tests `Team.location` to ensure it returns None when no metadata is given."""
+    with ApiClient():
+        team4099 = Team(4099)
+        assert team4099.location() is None
+
+
+def test_unable_to_find_team_location():
+    """Tests `Team.location` to ensure it returns None when it can't find the location of the team."""
+    with ApiClient():
+        fake_team = Team(0, city="Anywhere", state_prov="MD", country="USA")
+        assert fake_team.location() is None
+
+
 def test_caching_headers():
     """Tests the caching headers for the rest of the methods."""
     with pytest.raises(NotModifiedSinceError):

@@ -213,3 +213,73 @@ def test_event_max_opr():
     with ApiClient():
         maximum_opr, team = Event("2022chcmp").max(metric=Metrics.OPR)
         assert isinstance(maximum_opr, float) and isinstance(team, Team)
+
+
+def test_event_average_match_score():
+    """Tests `Event.average` to retrieve the average match score during an event."""
+    with ApiClient():
+        average_match_score = Event("2022chcmp").average(metric=Metrics.MATCH_SCORE)
+        assert isinstance(average_match_score, float)
+
+
+def test_event_average_opr():
+    """Tests `Event.average` to retrieve the average OPR during an event."""
+    with ApiClient():
+        average_opr = Event("2022chcmp").average(metric=Metrics.OPR)
+        assert isinstance(average_opr, float)
+
+
+def test_update_event_info():
+    """Mock test for `Event.update_info` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_info({"fake": "data"})
+
+
+def test_update_alliance_selections():
+    """Mock test for `Event.update_alliance_selections` which passes in data and expects back an error about a wrong key."""  # noqa
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_alliance_selections([["not a real team", "frc120000"], ["foo bar"]])
+
+
+def test_update_awards():
+    """Mock test for `Event.update_awards` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_awards([{"fake": "award"}])
+
+
+def test_update_matches():
+    """Mock test for `Event.update_matches` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_matches([{"qm1000": "match"}])
+
+
+def test_delete_matches():
+    """Mock test for `Event.delete_matches` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").delete_matches(["qm100"])
+
+
+def test_update_team_list():
+    """Mock test for `Event.update_team_list` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_team_list(["frc1000000", "frc0"])
+
+
+def test_update_match_videos():
+    """Mock test for `Event.update_match_videos` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_match_videos({"qm0": "yt-link"})
+
+
+def test_update_media():
+    """Mock test for `Event.update_media` which passes in data and expects back an error about a wrong key."""
+    with pytest.raises(TBAError, match="X-TBA-Auth-Sig"):
+        with ApiClient(auth_secret="NOT A REAL AUTH SECRET"):
+            Event("2022chcmp").update_media(["yt-video-1"])

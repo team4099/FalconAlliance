@@ -20,7 +20,7 @@ from falcon_alliance.schemas.robot import Robot
 
 try:
     from falcon_alliance.utils import *
-except ImportError:
+except ImportError:  # pragma: no cover
     from ...falcon_alliance.utils import *
 
 __all__ = ["District", "Event", "Team"]
@@ -809,7 +809,7 @@ class Event(BaseSchema):
         InternalData.loop.run_until_complete(
             InternalData.post(
                 self,
-                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/match_videos/update",
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/match_videos/add",
                 data=dumps(data),
             )
         )
@@ -823,7 +823,7 @@ class Event(BaseSchema):
         InternalData.loop.run_until_complete(
             InternalData.post(
                 self,
-                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/media/update",
+                url=f"https://www.thebluealliance.com/api/trusted/v1/event/{self.key}/media/add",
                 data=dumps(data),
             )
         )
@@ -1330,7 +1330,7 @@ class Team(BaseSchema):
             team_matches = self.matches(year, event_code) if event_code else self.matches(year)
             return min(team_matches, key=lambda match: match.alliance_of(self.key).score)
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
-            if event_code:
+            if event_code:  # pragma: no cover
                 raise ValueError(f"`event_code` parameter incompatible with the metric {metric}.")
 
             team_oprs = []
@@ -1342,7 +1342,7 @@ class Team(BaseSchema):
                     team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
 
             return min(team_oprs, key=lambda tup: tup[0])
-        else:
+        else:  # pragma: no cover
             raise ValueError(f"{metric} incompatible with `Team.min`.")
 
     def max(
@@ -1363,7 +1363,7 @@ class Team(BaseSchema):
             team_matches = self.matches(year, event_code) if event_code else self.matches(year)
             return max(team_matches, key=lambda match: match.alliance_of(self.key).score)
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
-            if event_code:
+            if event_code:  # pragma: no cover
                 raise ValueError(f"`event_code` parameter incompatible with the metric {metric}.")
 
             team_oprs = []
@@ -1375,7 +1375,7 @@ class Team(BaseSchema):
                     team_oprs.append((getattr(event_oprs, f"{metric.name.lower()}s")[self.key], event))
 
             return max(team_oprs, key=lambda tup: tup[0])
-        else:
+        else:  # pragma: no cover
             raise ValueError(f"{metric} incompatible with `Team.max`.")
 
     def average(
@@ -1396,7 +1396,7 @@ class Team(BaseSchema):
             team_matches = self.matches(year, event_code) if event_code else self.matches(year)
             return statistics.mean([match.alliance_of(self).score for match in team_matches])
         elif metric in {Metrics.OPR, Metrics.DPR, Metrics.CCWM}:
-            if event_code:
+            if event_code:  # pragma: no cover
                 raise ValueError(f"`event_code` parameter incompatible with the metric {metric}.")
 
             team_oprs = []
@@ -1408,7 +1408,7 @@ class Team(BaseSchema):
                     team_oprs.append(getattr(event_oprs, f"{metric.name.lower()}s")[self.key])
 
             return statistics.mean(team_oprs)
-        else:
+        else:  # pragma: no cover
             raise ValueError(f"{metric} incompatible with `Team.average`.")
 
     def location(self) -> typing.Optional[typing.Tuple[float, float]]:
@@ -1419,9 +1419,9 @@ class Team(BaseSchema):
             typing.Optional[typing.Tuple[float, float]]: Returns a tuple containing the latitude and longitude or None if it couldn't find a location for the team.
         """  # noqa
         if self.city or self.state_prov or self.country:
-            if self.country in {"USA", "Canada"}:
+            if self.country in {"USA", "Canada"}:  # pragma: no cover
                 to_search = ", ".join([value for value in (self.city, self.state_prov, self.country) if value])
-            else:
+            else:  # pragma: no cover
                 to_search = ", ".join([value for value in (self.city, self.country) if value])
 
             geolocation = InternalData.loop.run_until_complete(
