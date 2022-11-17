@@ -1,7 +1,6 @@
 import pytest
 
 from ..api_client import ApiClient
-from ..utils import *
 from ..schemas import *
 
 

@@ -4,11 +4,11 @@ from operator import attrgetter, itemgetter
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.colors import LinearSegmentedColormap, rgb2hex
+from matplotlib.colors import LinearSegmentedColormap
 from scipy.interpolate import make_interp_spline
 
 
-class AppliedFunction:
+class AppliedFunction:  # pragma: no cover
     """Represents an applied function, utilized for plotting."""
 
     def __init__(self, applied_result: list):
@@ -42,7 +42,7 @@ class AppliedFunction:
         return AppliedFunction([[to_apply(element) for element in lst] for lst in self._applied_result])
 
 
-def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
+def apply(function: typing.Callable, **kwargs) -> AppliedFunction:  # pragma: no cover
     """
     Applies keyword arguments to the function passed in, utilized for plotting.
 
@@ -64,7 +64,7 @@ def apply(function: typing.Callable, **kwargs) -> AppliedFunction:
     return AppliedFunction([function(**kwargs_constant, **fmt_kwargs) for fmt_kwargs in formatted_kwargs])
 
 
-class Plotter:
+class Plotter:  # pragma: no cover
     """
     Helper class to make visualizing data easier.
     Uses matplotlib and abstracts the details, however the user can extend what is given and FalconAlliance's plotting features are easily extendable overall.
@@ -118,10 +118,13 @@ class Plotter:
         x, y = list(x), list(y)
 
         if smoothen:
-            x_smooth = np.linspace(min(x), max(x), 200)
-            spl = make_interp_spline(x, y, k=3)
-            y_smooth = spl(x_smooth)
-            x, y = x_smooth, y_smooth
+            try:
+                x_smooth = np.linspace(min(x), max(x), 200)
+                spl = make_interp_spline(x, y, k=3)
+                y_smooth = spl(x_smooth)
+                x, y = x_smooth, y_smooth
+            except ValueError as exception:
+                raise ValueError("You need at least 4 points for interpolation.") from exception
 
         ax.plot(x, y, c=color, linewidth=2.5)
 
