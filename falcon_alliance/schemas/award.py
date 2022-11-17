@@ -1,12 +1,12 @@
 import typing
 from dataclasses import dataclass
 
-from .base_schema import BaseSchema
+from falcon_alliance.schemas.base_schema import BaseSchema
 
 try:
     from falcon_alliance_utils import *
 except ImportError:
-    from ..falcon_alliance_utils import *
+    from ..utils import *
 
 
 class Award(BaseSchema):

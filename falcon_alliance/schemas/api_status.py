@@ -1,6 +1,6 @@
 import typing
 
-from .base_schema import BaseSchema
+from falcon_alliance.schemas.base_schema import BaseSchema
 
 
 class APIStatus(BaseSchema):

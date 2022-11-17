@@ -2,12 +2,12 @@ import datetime
 import typing
 from dataclasses import dataclass
 
-from .base_schema import BaseSchema
+from falcon_alliance.schemas.base_schema import BaseSchema
 
 try:
     from falcon_alliance_utils import *  # noqa
 except ImportError:
-    from ..falcon_alliance_utils import *  # noqa
+    from ..utils import *  # noqa
 
 
 class Match(BaseSchema):

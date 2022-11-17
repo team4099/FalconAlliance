@@ -4,7 +4,7 @@ import typing
 
 import aiohttp
 
-from .exceptions import TBAError
+from falcon_alliance.utils.exceptions import TBAError
 
 
 class InternalData:

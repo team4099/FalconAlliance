@@ -3,7 +3,7 @@ import typing
 import pytest
 
 from ..api_client import ApiClient
-from ..falcon_alliance_utils import *
+from ..utils import *
 from ..schemas import *
 
 

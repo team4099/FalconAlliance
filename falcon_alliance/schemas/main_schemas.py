@@ -11,17 +11,17 @@ from statistics import mean
 
 import aiohttp
 
-from .award import Award
-from .base_schema import BaseSchema
-from .event_team_status import EventTeamStatus
-from .match import Match
-from .media import Media
-from .robot import Robot
+from falcon_alliance.schemas.award import Award
+from falcon_alliance.schemas.base_schema import BaseSchema
+from falcon_alliance.schemas.event_team_status import EventTeamStatus
+from falcon_alliance.schemas.match import Match
+from falcon_alliance.schemas.media import Media
+from falcon_alliance.schemas.robot import Robot
 
 try:
-    from falcon_alliance_utils import *
+    from falcon_alliance.utils import *
 except ImportError:
-    from ..falcon_alliance_utils import *
+    from ...falcon_alliance.utils import *
 
 __all__ = ["District", "Event", "Team"]
 PARSING_FORMAT = "%Y-%m-%d"

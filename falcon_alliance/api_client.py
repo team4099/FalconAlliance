@@ -3,14 +3,13 @@ import functools
 import itertools
 import os
 import typing
-from json import dumps
 from types import TracebackType
 
 import aiohttp
 from dotenv import load_dotenv
 
-from .falcon_alliance_utils import *
-from .schemas import *
+from falcon_alliance.utils import *
+from falcon_alliance.schemas import *
 
 __all__ = ["ApiClient"]
 
