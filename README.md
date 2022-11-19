@@ -1,5 +1,5 @@
 # FalconAlliance
-### A Pythonic wrapper around TBA and other FRC data sources at your convenience. You can find the documentation [here](https://falcon-alliance.readthedocs.io/en/latest)
+### A Pythonic wrapper around TBA and other FRC data sources at your convenience. You can find the documentation [here](https://falcon-alliance.readthedocs.io/en/latest).
 
 <hr>
 
