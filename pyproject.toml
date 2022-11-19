@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "falcon-alliance"
-version = "0.9.3"
+version = "1.0.0"
 description = "A Pythonic library that attains FRC-related information from sources like The Blue Alliance and more."
 authors = ["The Falcons - Team 4099 <contact@team4099.com>"]
 license = "MIT"
