@@ -1,6 +1,4 @@
 # FalconAlliance
-![Travis Status](https://img.shields.io/travis/team4099/FalconAlliance) 
-
 ### A Pythonic wrapper around TBA and other FRC data sources at your convenience.
 
 <hr>
