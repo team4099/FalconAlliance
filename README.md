@@ -18,7 +18,7 @@ If the following doesn't work, and you get an error regarding pip not being a co
 (.venv) $ python3 -m pip install falcon-alliance
 ```
 ```console
-(.venv) $ python3.(your version) -m pip install falcon-alliance
+(.venv) $ python3.<your_version> -m pip install falcon-alliance
 ```
 
 ## Setup
@@ -44,7 +44,7 @@ with falcon_alliance.ApiClient(api_key=YOUR_API_KEY) as api_client:
 <sup> For more examples with the building block, check out the [Common Tasks](https://falcon-alliance.readthedocs.io/en/latest/getting_started/quick_start.html#common-tasks) section and the [Examples](https://falcon-alliance.readthedocs.io/en/latest/getting_started/examples.html) section.
 
 ## Structure
-The structure of FalconAlliance code follows a hierarchy with each schema being its own class with its own methods.
+The structure of FalconAlliance code follows a hierarchy with each TBA base endpoint (i.e. `/teams`, `/district`, etc.) schema representing a Schema class with each of its methods being TBA-specific endpoints (i.e. `/teams/{page_num}`, `/district/{district_key}/events`).
 
 For example, all TBA endpoints stemming off from a team key (eg `team/{team_key}/events`) is under the `Team` class (in this case the corresponding method is `Team.events`).
 
