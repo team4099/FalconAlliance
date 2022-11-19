@@ -53,6 +53,9 @@ In the middle of the hierarchy are schemas with methods in them, containing endp
 
 At the bottom of the hierarchy are schemas which primarily act as data-classes, and are there as a means of communicating data in a readable format rather than having functionality. The classes at the bottom of the hierarchy are: `Award`, `EventTeamStatus`, `Match`, `Media`, and `Robot`.
 
+## Plotting
+FalconAlliance has a plotting feature that makes on-the-fly visualizations for you based on your data. **You can learn more about the plotting feature [here](https://github.com/team4099/FalconAlliance/blob/main/PLOTTING.md).**
+
 ## Examples
 ### [Creating a Dictionary Containing how many Teams each State has](https://falcon-alliance.readthedocs.io/en/latest/getting_started/examples.html#creating-a-dictionary-containing-how-many-teams-each-state-has)
 ```py
