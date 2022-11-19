@@ -1,7 +1,7 @@
 Installation
 ============
 
-FalconAlliance supports Python 3.7+, to install FalconAlliance use ``pip``.
+FalconAlliance supports Python 3.8+, to install FalconAlliance use ``pip``.
 
 .. code-block:: console
 

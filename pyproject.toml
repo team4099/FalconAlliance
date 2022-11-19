@@ -1,9 +1,16 @@
 [tool.poetry]
-name = "falcon_alliance"
-version = "0.4.4"
+name = "falcon-alliance"
+version = "0.9.0"
 description = "A Pythonic library that attains FRC-related information from sources like The Blue Alliance and more."
 authors = ["The Falcons - Team 4099 <contact@team4099.com>"]
 license = "MIT"
+
+[project]
+description = "Test"
+
+[project.urls]
+"Documentation" = "https://falcon-alliance.readthedocs.io/en/latest"
+"GitHub" = "https://github.com/team4099/FalconAlliance"
 
 [tool.poetry.dependencies]
 python = "^3.8"
