@@ -55,6 +55,8 @@ class ApiClient:
         InternalData.loop.run_until_complete(InternalData.set_session())
 
     def __enter__(self) -> "ApiClient":
+        if InternalData.session is None:
+            InternalData.loop.run_until_complete(InternalData.set_session())
         return self
 
     def __exit__(
